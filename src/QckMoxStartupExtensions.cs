@@ -9,14 +9,13 @@ namespace QckMox
     {
         public static IServiceCollection AddQckMox(this IServiceCollection services, IConfiguration config)
         {
-            return services
-                        .AddOptions()
-                        .Configure<QckMoxAppConfig>(config.GetSection(Constants.CONFIG_KEY))
-                        .AddSingleton<IFileProvider, FileProvider>()
-                        .AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
-                        .AddSingleton<IQckMoxResponseFileProvider, QckMoxResponseFileProvider>()
-                        .AddSingleton<IQckMoxResponseWriter, QckMoxResponseWriter>();
+            return services.Configure<QckMoxAppConfig>(config.GetSection(QckMoxAppConfig.APP_CONFIG_KEY))
+                           .AddSingleton<IFileProvider, FileProvider>()
+                           .AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
+                           .AddSingleton<IQckMoxResponseFileProvider, QckMoxResponseFileProvider>()
+                           .AddSingleton<IQckMoxResponseWriter, QckMoxResponseWriter>();
         }
+
         public static IApplicationBuilder UseQckMox(this IApplicationBuilder app)
         {
             return app.MapWhen(

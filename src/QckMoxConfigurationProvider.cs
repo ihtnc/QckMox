@@ -23,7 +23,7 @@ namespace QckMox
         public QckMoxConfigurationProvider(IOptions<QckMoxAppConfig> global, IFileProvider fileProvider)
         {
             var appConfig = global.Value;
-            var defaultConfig = GetDefaultConfig();
+            var defaultConfig = QckMoxAppConfig.Default;
             _config = defaultConfig.Merge(appConfig);
             _fileProvider = fileProvider;
         }
@@ -57,7 +57,7 @@ namespace QckMox
 
         public QckMoxConfig GetFolderConfig(string folderPath)
         {
-            var configFile = Path.Combine(folderPath, $"{Constants.CONFIG_KEY}.json");
+            var configFile = Path.Combine(folderPath, $"{QckMoxConfig.CONFIG_KEY}.json");
             var content = _fileProvider.GetContent(configFile);
             if(content == null) { return null; }
 
@@ -78,36 +78,6 @@ namespace QckMox
             var newConfig = new QckMoxResponseFileConfig();
             newConfig = newConfig.Merge(folderConfig.Response);
             return newConfig.Merge(config);
-        }
-
-        private static QckMoxAppConfig GetDefaultConfig()
-        {
-            return new QckMoxAppConfig
-            {
-                Disabled = false,
-                EndPoint = "/api/qckmox/",
-                ResponseSource = ".qckmox",
-                FileConfigProp = "__config",
-                ResponseMap = new Dictionary<string, string>(),
-                Request = new QckMoxRequestConfig
-                {
-                    RedirectUnmatched = false,
-                    QueryMapPrefix = string.Empty,
-                    HeaderMapPrefix = "qckmox-",
-                    MatchHeader = new string[0],
-                    MatchQuery = new string[0]
-                },
-                Response = new QckMoxResponseConfig
-                {
-                    ContentType = "application/json",
-                    FileContentProp = "__data",
-                    ContentInProp = false,
-                    Headers = new Dictionary<string, string>
-                    {
-                        {"X-Powered-By", "QckMox/1.0"}
-                    }
-                }
-            };
         }
     }
 }

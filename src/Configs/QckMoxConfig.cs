@@ -9,5 +9,7 @@ namespace QckMox.Configs
         public Dictionary<string, string> ResponseMap { get; set; }
         public QckMoxRequestConfig Request { get; set; }
         public QckMoxResponseConfig Response { get; set; }
+
+        internal const string CONFIG_KEY = "_qckmox";
     }
 }
