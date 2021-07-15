@@ -35,3 +35,5 @@ OutputDir\
 QckMox creates the `/api/qckmox/` route within your API and any request made using this starting route will be responded to based on the folder structure in `.qckmox`.
 
 In the example above, the response received when making the request `GET /api/qckmox/demo` will be the content of the file `.qckmox\demo\Get.json`. Any other request made using the `/api/qckmox` route will result in HTTP 404.
+
+More examples in the demo folder.

@@ -1,0 +1,15 @@
+{
+    "data": [
+        "Freezing",
+        "Bracing",
+        "Chilly",
+        "Cool",
+        "Mild",
+        "Warm",
+        "Balmy",
+        "Hot",
+        "Sweltering",
+        "Scorching"
+    ],
+    "message": "Found 10 items!"
+}

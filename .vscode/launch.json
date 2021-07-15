@@ -1,0 +1,35 @@
+{
+   // Use IntelliSense to find out which attributes exist for C# debugging
+   // Use hover for the description of the existing attributes
+   // For further information visit https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md
+   "version": "0.2.0",
+   "configurations": [
+        // QckMox.Demo.Simple
+        {
+            "name": ".NET Core Launch (QckMox.Demo.Simple)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "QckMox.Demo.Simple: build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "QckMox.Demo.Simple.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/demo/simple/bin/Debug/netcoreapp5.0/",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "uriFormat": "%s/swagger",
+                "pattern": "^\\s*Now listening on:\\s+(http:\\/\\/.+[0-9]+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        }
+    ]
+}
