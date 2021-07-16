@@ -13,7 +13,7 @@
             // If you have changed target frameworks, make sure to update the program path.
             "program": "QckMox.Demo.Simple.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/demo/simple/bin/Debug/netcoreapp5.0/",
+            "cwd": "${workspaceFolder}/demo/01-simple/bin/Debug/netcoreapp5.0/",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
@@ -36,7 +36,7 @@
             // If you have changed target frameworks, make sure to update the program path.
             "program": "QckMox.Demo.Standalone.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/demo/standalone/bin/Debug/netcoreapp5.0/",
+            "cwd": "${workspaceFolder}/demo/02-standalone/bin/Debug/netcoreapp5.0/",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {

@@ -7,8 +7,8 @@
             "type": "shell",
             "command": "xcopy",
             "args": [
-                "${workspaceFolder}\\demo\\simple\\.qckmox",
-                "${workspaceFolder}\\demo\\simple\\bin\\Debug\\netcoreapp5.0\\.qckmox",
+                "${workspaceFolder}\\demo\\01-simple\\.qckmox",
+                "${workspaceFolder}\\demo\\01-simple\\bin\\Debug\\netcoreapp5.0\\.qckmox",
                 "/Y",
                 "/I",
                 "/E"
@@ -21,7 +21,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/demo/simple/QckMox.Demo.Simple.csproj",
+                "${workspaceFolder}/demo/01-simple/QckMox.Demo.Simple.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -36,8 +36,8 @@
             "type": "shell",
             "command": "xcopy",
             "args": [
-                "${workspaceFolder}\\demo\\standalone\\.qckmox",
-                "${workspaceFolder}\\demo\\standalone\\bin\\Debug\\netcoreapp5.0\\.qckmox",
+                "${workspaceFolder}\\demo\\02-standalone\\.qckmox",
+                "${workspaceFolder}\\demo\\02-standalone\\bin\\Debug\\netcoreapp5.0\\.qckmox",
                 "/Y",
                 "/I",
                 "/E"
@@ -50,7 +50,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/demo/standalone/QckMox.Demo.Standalone.csproj",
+                "${workspaceFolder}/demo/02-standalone/QckMox.Demo.Standalone.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
