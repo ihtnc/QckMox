@@ -33,6 +33,7 @@ namespace QckMox
             var requestConfig = GetRequestConfig(request);
             if(requestConfig.Disabled is true) { return QckMoxResponse.RedirectResponse; }
 
+            // try to match a response file from a map config
             var matchResult = MatchAgainstMap(request, requestConfig);
 
             // otherwise, try to match a response file from a query string
@@ -71,7 +72,6 @@ namespace QckMox
 
         private ResponseFileMatchResult MatchAgainstMap(HttpRequest request, QckMoxConfig requestConfig)
         {
-            // try to match a response file from a map config
             var responseMapFile = GetResponseMapFile(request, requestConfig);
 
             return GetMatchResult(responseMapFile, requestConfig);
@@ -146,6 +146,11 @@ namespace QckMox
             if(config.ResponseMap.ContainsKey(requestString))
             {
                 responseFile = config.ResponseMap[requestString];
+
+                if (Path.IsPathRooted(responseFile) is false)
+                {
+                    responseFile = Path.Combine(_global.ResponseSource, responseFile);
+                }
             }
 
             return responseFile.Trim();
