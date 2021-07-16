@@ -12,7 +12,7 @@ namespace QckMox
     {
         public string GetContent(string filePath)
         {
-            if(!File.Exists(filePath) && !Path.IsPathRooted(filePath))
+            if(File.Exists(filePath) is false && Path.IsPathRooted(filePath) is false)
             {
                 var assemblyPath = Assembly.GetExecutingAssembly().Location;
                 var rootPath = Path.GetDirectoryName(assemblyPath);
@@ -20,7 +20,7 @@ namespace QckMox
                 filePath = Path.Combine(rootPath, filePath);
             }
 
-            if(!File.Exists(filePath)) { return null; }
+            if(File.Exists(filePath) is false) { return null; }
 
             string content = null;
             using(var reader = File.OpenText(filePath))

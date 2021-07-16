@@ -9,19 +9,17 @@ namespace QckMox
     {
         public static IServiceCollection AddQckMox(this IServiceCollection services, IConfiguration config)
         {
-            return services.Configure<QckMoxAppConfig>(config.GetSection(QckMoxAppConfig.APP_CONFIG_KEY))
+            return services.Configure<QckMoxAppConfig>(config.GetSection(QckMoxAppConfig.CONFIG_KEY))
                            .AddSingleton<IFileProvider, FileProvider>()
                            .AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
                            .AddSingleton<IQckMoxResponseFileProvider, QckMoxResponseFileProvider>()
                            .AddSingleton<IQckMoxResponseWriter, QckMoxResponseWriter>();
+
         }
 
         public static IApplicationBuilder UseQckMox(this IApplicationBuilder app)
         {
-            return app.MapWhen(
-                context => QckMoxStartupHelper.IsMockUri(context),
-                builder => { builder.Use(QckMoxStartupHelper.MockMiddleware); }
-            );
+            return app.UseMiddleware<QckMoxMiddleware>();
         }
     }
 }

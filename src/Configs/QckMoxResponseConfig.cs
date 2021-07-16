@@ -8,5 +8,7 @@ namespace QckMox.Configs
         public bool ContentInProp { get; set; }
         public string FileContentProp { get; set; }
         public Dictionary<string, string> Headers { get; set; }
+
+        internal const string CONFIG_KEY = "_qckmox";
     }
 }

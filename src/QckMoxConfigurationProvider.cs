@@ -57,7 +57,7 @@ namespace QckMox
 
         public QckMoxConfig GetFolderConfig(string folderPath)
         {
-            var configFile = Path.Combine(folderPath, $"{QckMoxConfig.CONFIG_KEY}.json");
+            var configFile = Path.Combine(folderPath, QckMoxConfig.FOLDER_CONFIG_FILE);
             var content = _fileProvider.GetContent(configFile);
             if(content == null) { return null; }
 
@@ -71,8 +71,8 @@ namespace QckMox
             if(content == null) { return null; }
 
             var file = JObject.Parse(content);
-            var prop = file.SelectToken($"{folderConfig.FileConfigProp}");
-            if(prop?.HasValues != true) { return null; }
+            var prop = file.SelectToken($"{QckMoxResponseFileConfig.CONFIG_KEY}");
+            if(prop?.HasValues is not true) { return null; }
 
             var config = prop.ToObject<QckMoxResponseFileConfig>();
             var newConfig = new QckMoxResponseFileConfig();

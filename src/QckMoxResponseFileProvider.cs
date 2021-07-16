@@ -31,49 +31,73 @@ namespace QckMox
         public QckMoxResponse GetResponse(HttpRequest request)
         {
             var requestConfig = GetRequestConfig(request);
-            if(requestConfig.Disabled == true) { return null; }
+            if(requestConfig.Disabled is true) { return QckMoxResponse.RedirectResponse; }
 
-            var responseMapFile = GetResponseMapFile(request, requestConfig);
-            var fileConfig = _config.GetResponseFileConfig(responseMapFile, requestConfig);
-            var fileContent = _file.GetContent(responseMapFile);
-            if(fileContent == null)
+            var matchResult = MatchAgainstMap(request, requestConfig);
+
+            // otherwise, try to match a response file from a query string
+            if(matchResult.Content is null)
             {
-                var methodString = GetMapMethodString(request);
-                var queryString = GetMapQueryString(request, requestConfig);
-                var requestString = $"{methodString} {queryString.TrimStart('?')}".Trim();
-                var responseFile = $"{requestString}.json";
-                var mockPath = GetMockPath(request);
-                var filePath = Path.Combine(_global.ResponseSource, mockPath, responseFile);
-
-                fileConfig = _config.GetResponseFileConfig(filePath, requestConfig);
-                fileContent = _file.GetContent(filePath);
+                matchResult = MatchAgainstHttpMethod(request, requestConfig, true);
             }
 
-            if(fileContent == null && requestConfig.Request.RedirectUnmatched)
+            // otherwise, if applicable, try to match just to the http method
+            // this is to ensure that only requests with query strings get matched
+            //   since those without query strings are handled on the previous step already
+            var hasQueryString = request.Query.Any();
+            var matchHttpMethod = requestConfig.Request.UnmatchedRequest.MatchHttpMethod;
+            if(matchResult.Content is null && hasQueryString && matchHttpMethod)
             {
-                var requestString = GetMapMethodString(request);
-                var responseFile = $"{requestString}.json";
-                var mockPath = GetMockPath(request);
-                var filePath = Path.Combine(_global.ResponseSource, mockPath, responseFile);
-
-                fileConfig = _config.GetResponseFileConfig(filePath, requestConfig);
-                fileContent = _file.GetContent(filePath);
+                matchResult = MatchAgainstHttpMethod(request, requestConfig, false);
             }
 
-            if(fileContent == null) { return null; }
+            var fileConfig = matchResult.Config.Merge(requestConfig.Response);
+            if(matchResult.Content is null)
+            {
+                var isPassthrough = requestConfig.Request.UnmatchedRequest.Passthrough;
+                return isPassthrough
+                    ? QckMoxResponse.RedirectResponse
+                    : QckMoxResponse.GetNotFoundResponse(fileConfig);
+            }
 
-            var objFileContent = JObject.Parse(fileContent);
+            var objFileContent = JToken.Parse(matchResult.Content);
             if(objFileContent.Type != JTokenType.Object) { return null; }
 
-            fileConfig = fileConfig.Merge(requestConfig.Response);
-            var json = GetContent(objFileContent, requestConfig, fileConfig);
+            var json = GetContent((JObject)objFileContent, requestConfig, fileConfig);
             var response = GetContentStream(json, fileConfig);
 
-            return new QckMoxResponse
+            return QckMoxResponse.GetSuccessResponse(response, fileConfig);
+        }
+
+        private ResponseFileMatchResult MatchAgainstMap(HttpRequest request, QckMoxConfig requestConfig)
+        {
+            // try to match a response file from a map config
+            var responseMapFile = GetResponseMapFile(request, requestConfig);
+
+            return GetMatchResult(responseMapFile, requestConfig);
+        }
+
+        private ResponseFileMatchResult MatchAgainstHttpMethod(HttpRequest request, QckMoxConfig requestConfig, bool includeQueryString)
+        {
+            var methodString = GetMapMethodString(request);
+            var queryString = includeQueryString ? GetMapQueryString(request, requestConfig) : string.Empty;
+            var requestString = $"{methodString} {queryString.TrimStart('?')}".Trim();
+            var responseFile = $"{requestString}.json";
+            var mockPath = GetMockPath(request);
+            var filePath = Path.Combine(_global.ResponseSource, mockPath, responseFile);
+
+            return GetMatchResult(filePath, requestConfig);
+        }
+
+        private ResponseFileMatchResult GetMatchResult(string filePath, QckMoxConfig requestConfig)
+        {
+            var fileConfig = _config.GetResponseFileConfig(filePath, requestConfig);
+            var fileContent = _file.GetContent(filePath);
+
+            return new ResponseFileMatchResult
             {
-                ContentType = fileConfig.ContentType,
-                Headers = fileConfig.Headers,
-                Content = response
+                Config = fileConfig,
+                Content = fileContent
             };
         }
 
@@ -81,7 +105,7 @@ namespace QckMox
         {
             JToken json;
 
-            if(fileConfig.ContentInProp == true)
+            if(fileConfig.ContentInProp is true)
             {
                 var hasKey = fileContent.ContainsKey(fileConfig.FileContentProp);
                 json = hasKey ? fileContent[fileConfig.FileContentProp] : null;
@@ -89,7 +113,7 @@ namespace QckMox
             else
             {
                 var copy = (JObject)fileContent.DeepClone();
-                copy.Remove(requestConfig.FileConfigProp);
+                copy.Remove(QckMoxResponseConfig.CONFIG_KEY);
                 json = copy;
             }
 
@@ -99,7 +123,7 @@ namespace QckMox
         private Stream GetContentStream(JToken content, QckMoxResponseFileConfig fileConfig)
         {
             byte[] response;
-            if(fileConfig?.Base64Content == true)
+            if(fileConfig?.Base64Content is true)
             {
                 var base64String = content.Value<string>();
                 response = Convert.FromBase64String(base64String);
@@ -159,7 +183,7 @@ namespace QckMox
         {
             var parts = new List<string>();
 
-            if(requestConfig.Request.MatchQuery?.Any() == true)
+            if(requestConfig.Request.MatchQuery?.Any() is true)
             {
                 foreach(var query in requestConfig.Request.MatchQuery)
                 {
@@ -169,7 +193,7 @@ namespace QckMox
                 }
             }
 
-            if(requestConfig.Request.MatchHeader?.Any() == true)
+            if(requestConfig.Request.MatchHeader?.Any() is true)
             {
                 foreach(var header in requestConfig.Request.MatchHeader)
                 {
@@ -179,10 +203,16 @@ namespace QckMox
                 }
             }
 
-            if(!parts.Any()) { return string.Empty; }
+            if(parts.Any() is false) { return string.Empty; }
 
             var queryString = string.Join('&', parts);
             return $"?{queryString}";
+        }
+
+        private class ResponseFileMatchResult
+        {
+            public QckMoxResponseFileConfig Config { get; set; }
+            public string Content { get; set; }
         }
     }
 }
