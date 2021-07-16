@@ -85,6 +85,35 @@
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": ["QckMox.Demo.Passthrough: copy-mocks"],
+        },
+
+
+        // QckMox.Demo.ResponseMap
+        {
+            "label": "QckMox.Demo.ResponseMap: copy-mocks",
+            "type": "shell",
+            "command": "xcopy",
+            "args": [
+                "${workspaceFolder}\\demo\\04-response-map\\.qckmox",
+                "${workspaceFolder}\\demo\\04-response-map\\bin\\Debug\\netcoreapp5.0\\.qckmox",
+                "/Y",
+                "/I",
+                "/E"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "QckMox.Demo.ResponseMap: build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/demo/04-response-map/QckMox.Demo.ResponseMap.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn": ["QckMox.Demo.ResponseMap: copy-mocks"],
         }
     ]
 }

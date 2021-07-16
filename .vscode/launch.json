@@ -73,6 +73,29 @@
         },
 
 
+        // QckMox.Demo.ResponseMap
+        {
+            "name": ".NET Core Launch (QckMox.Demo.ResponseMap)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "QckMox.Demo.ResponseMap: build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "QckMox.Demo.ResponseMap.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/demo/04-response-map/bin/Debug/netcoreapp5.0/",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "uriFormat": "%s/api/weathersummary/1",
+                "pattern": "^\\s*Now listening on:\\s+(http:\\/\\/.+[0-9]+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+
+
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
