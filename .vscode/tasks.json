@@ -27,6 +27,35 @@
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": ["QckMox.Demo.Simple: copy-mocks"],
+        },
+
+
+        // QckMox.Demo.Standalone
+        {
+            "label": "QckMox.Demo.Standalone: copy-mocks",
+            "type": "shell",
+            "command": "xcopy",
+            "args": [
+                "${workspaceFolder}\\demo\\standalone\\.qckmox",
+                "${workspaceFolder}\\demo\\standalone\\bin\\Debug\\netcoreapp5.0\\.qckmox",
+                "/Y",
+                "/I",
+                "/E"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "QckMox.Demo.Standalone: build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/demo/standalone/QckMox.Demo.Standalone.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn": ["QckMox.Demo.Standalone: copy-mocks"],
         }
     ]
 }

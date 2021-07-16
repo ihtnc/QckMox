@@ -1,0 +1,28 @@
+{
+    "data": [{
+            "date": "2021-07-16T12:04:32.7184447+10:00",
+            "temperatureC": -14,
+            "summary": "Freezing"
+        }, {
+            "date": "2021-07-17T12:04:32.7186188+10:00",
+            "temperatureC": 14,
+            "summary": "Balmy"
+        }, {
+            "date": "2021-07-18T12:04:32.7186208+10:00",
+            "temperatureC": -4,
+            "summary": "Scorching"
+        }, {
+            "date": "2021-07-19T12:04:32.7186213+10:00",
+            "temperatureC": 7,
+            "summary": "Freezing"
+        }, {
+            "date": "2021-07-20T12:04:32.7186216+10:00",
+            "temperatureC": 38,
+            "summary": "Mild"
+        }
+    ],
+
+    "_qckmox": {
+        "contentInProp": true
+    }
+}
