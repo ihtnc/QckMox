@@ -1,0 +1,29 @@
+{
+    "mock_data": [{
+          "date": "2021-07-17T10:48:05.3197584+10:00",
+          "temperatureC": 43,
+          "summary": "Cool"
+        }, {
+          "date": "2021-07-18T10:48:05.3199286+10:00",
+          "temperatureC": 41,
+          "summary": "Mild"
+        }, {
+          "date": "2021-07-19T10:48:05.3199307+10:00",
+          "temperatureC": 53,
+          "summary": "Mild"
+        }, {
+          "date": "2021-07-20T10:48:05.3199311+10:00",
+          "temperatureC": -1,
+          "summary": "Sweltering"
+        }, {
+          "date": "2021-07-21T10:48:05.3199314+10:00",
+          "temperatureC": 48,
+          "summary": "Mild"
+        }
+    ],
+
+    "_qckmox": {
+        "contentInProp": true,
+        "fileContentProp": "mock_data"
+    }
+}
