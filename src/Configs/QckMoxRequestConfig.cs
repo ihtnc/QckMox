@@ -1,6 +1,6 @@
 namespace QckMox.Configs
 {
-    public class QckMoxRequestConfig
+    internal class QckMoxRequestConfig
     {
         public QckMoxUnmatchedRequestConfig UnmatchedRequest { get; set; }
         public string QueryMapPrefix { get; set; }

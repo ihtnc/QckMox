@@ -1,6 +1,6 @@
 namespace QckMox.Configs
 {
-    public class QckMoxUnmatchedRequestConfig
+    internal class QckMoxUnmatchedRequestConfig
     {
         public bool MatchHttpMethod { get; set; }
         public bool Passthrough { get; set; }

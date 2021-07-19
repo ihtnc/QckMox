@@ -2,14 +2,14 @@ using System.Collections.Generic;
 
 namespace QckMox.Configs
 {
-    public class QckMoxAppConfig : QckMoxConfig
+    internal class QckMoxAppConfig : QckMoxConfig
     {
         public string EndPoint { get; set; }
         public string ResponseSource { get; set; }
 
-        internal const string CONFIG_KEY = "QckMox";
+        public const string CONFIG_KEY = "QckMox";
 
-        internal static readonly QckMoxAppConfig Default = new QckMoxAppConfig
+        public static readonly QckMoxAppConfig Default = new QckMoxAppConfig
         {
             Disabled = false,
             EndPoint = "/api/qckmox/",

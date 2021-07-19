@@ -10,12 +10,12 @@ using QckMox.Configs;
 
 namespace QckMox
 {
-    public interface IQckMoxResponseFileProvider
+    internal interface IQckMoxResponseFileProvider
     {
         QckMoxResponse GetResponse(HttpRequest request);
     }
 
-    public class QckMoxResponseFileProvider : IQckMoxResponseFileProvider
+    internal class QckMoxResponseFileProvider : IQckMoxResponseFileProvider
     {
         private readonly IQckMoxConfigurationProvider _config;
         private readonly IFileProvider _file;

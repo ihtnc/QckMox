@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace QckMox
 {
-    public class QckMoxMiddleware
+    internal class QckMoxMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly IQckMoxResponseWriter _responseWriter;

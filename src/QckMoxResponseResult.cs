@@ -1,6 +1,6 @@
 namespace QckMox
 {
-    public enum QckMoxResponseResult
+    internal enum QckMoxResponseResult
     {
         Success,
         NotFound,

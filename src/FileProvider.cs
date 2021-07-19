@@ -3,12 +3,12 @@ using System.Reflection;
 
 namespace QckMox
 {
-    public interface IFileProvider
+    internal interface IFileProvider
     {
         string GetContent(string filePath);
     }
 
-    public class FileProvider : IFileProvider
+    internal class FileProvider : IFileProvider
     {
         public string GetContent(string filePath)
         {

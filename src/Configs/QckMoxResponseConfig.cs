@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 namespace QckMox.Configs
 {
-    public class QckMoxResponseConfig
+    internal class QckMoxResponseConfig
     {
         public string ContentType { get; set; }
         public bool ContentInProp { get; set; }
         public string FileContentProp { get; set; }
         public Dictionary<string, string> Headers { get; set; }
 
-        internal const string CONFIG_KEY = "_qckmox";
+        public const string CONFIG_KEY = "_qckmox";
     }
 }

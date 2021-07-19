@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Http;
 
 namespace QckMox
 {
-    public interface IQckMoxResponseWriter
+    internal interface IQckMoxResponseWriter
     {
         Task<bool> Write(HttpContext context);
     }
 
-    public class QckMoxResponseWriter : IQckMoxResponseWriter
+    internal class QckMoxResponseWriter : IQckMoxResponseWriter
     {
         private readonly IQckMoxConfigurationProvider _config;
         private readonly IQckMoxResponseFileProvider _file;

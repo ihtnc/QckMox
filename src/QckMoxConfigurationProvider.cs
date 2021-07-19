@@ -8,7 +8,7 @@ using QckMox.Configs;
 
 namespace QckMox
 {
-    public interface IQckMoxConfigurationProvider
+    internal interface IQckMoxConfigurationProvider
     {
         QckMoxAppConfig GetGlobalConfig();
         QckMoxConfig GetRequestConfig(string requestUri);
@@ -16,7 +16,7 @@ namespace QckMox
         QckMoxResponseFileConfig GetResponseFileConfig(string filePath, QckMoxConfig folderConfig);
     }
 
-    public class QckMoxConfigurationProvider : IQckMoxConfigurationProvider
+    internal class QckMoxConfigurationProvider : IQckMoxConfigurationProvider
     {
         private readonly QckMoxAppConfig _config;
         private readonly IFileProvider _fileProvider;

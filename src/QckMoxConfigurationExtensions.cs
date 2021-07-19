@@ -3,7 +3,7 @@ using Newtonsoft.Json.Linq;
 
 namespace QckMox
 {
-    public static class QckMoxConfigurationExtensions
+    internal static class QckMoxConfigurationExtensions
     {
         public static T Merge<T, U>(this T config, U updates) where T : U, new()
         {

@@ -1,6 +1,6 @@
 namespace QckMox.Configs
 {
-    public class QckMoxResponseFileConfig : QckMoxResponseConfig
+    internal class QckMoxResponseFileConfig : QckMoxResponseConfig
     {
         public bool Base64Content { get; set; }
     }

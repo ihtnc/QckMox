@@ -4,7 +4,7 @@ using QckMox.Configs;
 
 namespace QckMox
 {
-    public class QckMoxResponse
+    internal class QckMoxResponse
     {
         public QckMoxResponseResult Result { get; set; }
 
