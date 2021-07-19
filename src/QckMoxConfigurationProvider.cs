@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using QckMox.Configs;
@@ -24,7 +25,8 @@ namespace QckMox
         {
             var appConfig = global.Value;
             var defaultConfig = QckMoxAppConfig.Default;
-            _config = defaultConfig.Merge(appConfig);
+            var config = defaultConfig.Merge(appConfig);
+            _config = ResolveResponseMapPaths(config.ResponseSource, config);
             _fileProvider = fileProvider;
         }
 
@@ -37,13 +39,18 @@ namespace QckMox
         {
             // merge all folder configs referenced by the requestUri
             var global = _config;
+            var breadCrumb = global.ResponseSource;
             var queue = new Queue<string>();
-            queue.Enqueue(global.ResponseSource);
+            queue.Enqueue(breadCrumb);
 
             QckMoxConfig config = global;
 
             var uris = requestUri.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach(var uri in uris) { queue.Enqueue(Path.Combine(queue.Peek(), uri)); }
+            foreach(var uri in uris)
+            {
+                breadCrumb = Path.Combine(breadCrumb, uri);
+                queue.Enqueue(breadCrumb);
+            }
 
             while(queue.Count > 0)
             {
@@ -59,10 +66,13 @@ namespace QckMox
         {
             var configFile = Path.Combine(folderPath, QckMoxConfig.FOLDER_CONFIG_FILE);
             var content = _fileProvider.GetContent(configFile);
-            if(content == null) { return null; }
+            if(content is null) { return null; }
 
             var obj = JObject.Parse(content);
-            return obj.ToObject<QckMoxConfig>();
+            var config = obj.ToObject<QckMoxConfig>();
+            config = ResolveResponseMapPaths(folderPath, config);
+
+            return config;
         }
 
         public QckMoxResponseFileConfig GetResponseFileConfig(string filePath, QckMoxConfig folderConfig)
@@ -78,6 +88,22 @@ namespace QckMox
             var newConfig = new QckMoxResponseFileConfig();
             newConfig = newConfig.Merge(folderConfig.Response);
             return newConfig.Merge(config);
+        }
+
+        private T ResolveResponseMapPaths<T>(string basePath, T config) where T: QckMoxConfig
+        {
+            if(config.ResponseMap?.Any() is true)
+            {
+                foreach(var item in config.ResponseMap)
+                {
+                    if (Path.IsPathRooted(item.Value) is false)
+                    {
+                        config.ResponseMap[item.Key] = Path.Combine(basePath, item.Value);
+                    }
+                }
+            }
+
+            return config;
         }
     }
 }

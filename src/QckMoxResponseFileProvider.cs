@@ -146,11 +146,6 @@ namespace QckMox
             if(config.ResponseMap.ContainsKey(requestString))
             {
                 responseFile = config.ResponseMap[requestString];
-
-                if (Path.IsPathRooted(responseFile) is false)
-                {
-                    responseFile = Path.Combine(_global.ResponseSource, responseFile);
-                }
             }
 
             return responseFile.Trim();
