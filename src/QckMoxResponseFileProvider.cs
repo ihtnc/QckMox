@@ -19,12 +19,10 @@ namespace QckMox
     {
         private readonly IQckMoxConfigurationProvider _config;
         private readonly IFileProvider _file;
-        private readonly QckMoxAppConfig _global;
 
         public QckMoxResponseFileProvider(IQckMoxConfigurationProvider config, IFileProvider file)
         {
             _config = config;
-            _global = config.GetGlobalConfig();
             _file = file;
         }
 
@@ -84,7 +82,8 @@ namespace QckMox
             var requestString = $"{methodString} {queryString.TrimStart('?')}".Trim();
             var responseFile = $"{requestString}.json";
             var mockPath = GetMockPath(request);
-            var filePath = Path.Combine(_global.ResponseSource, mockPath, responseFile);
+            var globalConfig = _config.GetGlobalConfig();
+            var filePath = Path.Combine(globalConfig.ResponseSource, mockPath, responseFile);
 
             return GetMatchResult(filePath, requestConfig);
         }
@@ -153,7 +152,8 @@ namespace QckMox
 
         private string GetMockPath(HttpRequest request)
         {
-            return request.Path.Value.Replace(_global.EndPoint, string.Empty, StringComparison.OrdinalIgnoreCase);
+            var globalConfig = _config.GetGlobalConfig();
+            return request.Path.Value.Replace(globalConfig.EndPoint, string.Empty, StringComparison.OrdinalIgnoreCase);
         }
 
         private QckMoxConfig GetRequestConfig(HttpRequest request)

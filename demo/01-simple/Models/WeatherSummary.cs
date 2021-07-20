@@ -1,5 +1,3 @@
-using System;
-
 namespace QckMox.Demo.Simple.Models
 {
     public class WeatherSummary

@@ -6,7 +6,7 @@
    "configurations": [
         // QckMox.Demo.Simple
         {
-            "name": ".NET Core Launch (QckMox.Demo.Simple)",
+            "name": "QckMox.Demo.Simple",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "QckMox.Demo.Simple: build",
@@ -29,7 +29,7 @@
 
         // QckMox.Demo.Standalone
         {
-            "name": ".NET Core Launch (QckMox.Demo.Standalone)",
+            "name": "QckMox.Demo.Standalone",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "QckMox.Demo.Standalone: build",
@@ -52,7 +52,7 @@
 
         // QckMox.Demo.Passthrough
         {
-            "name": ".NET Core Launch (QckMox.Demo.Passthrough)",
+            "name": "QckMox.Demo.Passthrough",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "QckMox.Demo.Passthrough: build",
@@ -75,7 +75,7 @@
 
         // QckMox.Demo.ResponseMap
         {
-            "name": ".NET Core Launch (QckMox.Demo.ResponseMap)",
+            "name": "QckMox.Demo.ResponseMap",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "QckMox.Demo.ResponseMap: build",
