@@ -1,7 +1,16 @@
+using Newtonsoft.Json;
+
 namespace QckMox.Configs
 {
-    internal class QckMoxResponseFileConfig : QckMoxResponseConfig
+    internal class QckMoxResponseFileConfig : QckMoxResponseFileConfigValues
     {
-        public bool Base64Content { get; set; }
+        [JsonIgnore]
+        public bool Base64Content => Base64ContentConfigValue ?? default;
+    }
+
+    internal class QckMoxResponseFileConfigValues : QckMoxResponseConfig
+    {
+        [JsonProperty("Base64Content")]
+        public bool? Base64ContentConfigValue { get; set; }
     }
 }

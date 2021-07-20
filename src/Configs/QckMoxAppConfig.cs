@@ -1,42 +1,56 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 
 namespace QckMox.Configs
 {
-    internal class QckMoxAppConfig : QckMoxConfig
+    internal class QckMoxAppConfig : QckMoxAppConfigValue
     {
-        public string EndPoint { get; set; }
-        public string ResponseSource { get; set; }
+        [JsonIgnore]
+        public string EndPoint => EndPointConfigValue ?? default;
+
+        [JsonIgnore]
+        public string ResponseSource => ResponseSourceConfigValue ?? default;
 
         public const string CONFIG_KEY = "QckMox";
 
         public static readonly QckMoxAppConfig Default = new QckMoxAppConfig
         {
-            Disabled = false,
-            EndPoint = "/api/qckmox/",
-            ResponseSource = ".qckmox",
-            ResponseMap = new Dictionary<string, string>(),
-            Request = new QckMoxRequestConfig
+            EndPointConfigValue = "/api/qckmox/",
+            ResponseSourceConfigValue = ".qckmox",
+
+            DisabledConfigValue = false,
+            ResponseMapConfigValue = new Dictionary<string, string>(),
+            RequestConfigValue = new QckMoxRequestConfig
             {
-                UnmatchedRequest = new QckMoxUnmatchedRequestConfig
+                UnmatchedRequestConfigValue = new QckMoxUnmatchedRequestConfig
                 {
-                    MatchHttpMethod = false,
-                    Passthrough = false
+                    MatchHttpMethodConfigValue = false,
+                    PassthroughConfigValue = false
                 },
-                QueryMapPrefix = string.Empty,
-                HeaderMapPrefix = "qckmox-",
-                MatchHeader = new string[0],
-                MatchQuery = new string[0]
+                QueryMapPrefixConfigValue = string.Empty,
+                HeaderMapPrefixConfigValue = "qckmox-",
+                MatchHeaderConfigValue = new string[0],
+                MatchQueryConfigValue = new string[0]
             },
-            Response = new QckMoxResponseConfig
+            ResponseConfigValue = new QckMoxResponseConfig
             {
-                ContentType = "application/json",
-                FileContentProp = "data",
-                ContentInProp = false,
-                Headers = new Dictionary<string, string>
+                ContentTypeConfigValue = "application/json",
+                FileContentPropConfigValue = "data",
+                ContentInPropConfigValue = false,
+                HeadersConfigValue = new Dictionary<string, string>
                 {
                     {"X-Powered-By", "QckMox/1.0"}
                 }
             }
         };
+    }
+
+    internal class QckMoxAppConfigValue : QckMoxConfig
+    {
+        [JsonProperty("EndPoint")]
+        public string EndPointConfigValue { get; set; }
+
+        [JsonProperty("ResponseSource")]
+        public string ResponseSourceConfigValue { get; set; }
     }
 }

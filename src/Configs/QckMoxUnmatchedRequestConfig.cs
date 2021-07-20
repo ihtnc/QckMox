@@ -1,9 +1,24 @@
+using Newtonsoft.Json;
+
 namespace QckMox.Configs
 {
-    internal class QckMoxUnmatchedRequestConfig
+    internal class QckMoxUnmatchedRequestConfig : QckMoxUnmatchedRequestConfigValues
     {
-        public bool MatchHttpMethod { get; set; }
-        public bool Passthrough { get; set; }
+        [JsonIgnore]
+        public bool MatchHttpMethod => MatchHttpMethodConfigValue ?? default;
+
+        [JsonIgnore]
+        public bool Passthrough => PassthroughConfigValue ?? default;
+
+    }
+
+    internal class QckMoxUnmatchedRequestConfigValues
+    {
+        [JsonProperty("MatchHttpMethod")]
+        public bool? MatchHttpMethodConfigValue { get; set; }
+
+        [JsonProperty("Passthrough")]
+        public bool? PassthroughConfigValue { get; set; }
 
     }
 }
