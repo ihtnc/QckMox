@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using QckMox.Configuration;
 
-namespace QckMox
+namespace QckMox.Response
 {
     internal interface IQckMoxResponseWriter
     {

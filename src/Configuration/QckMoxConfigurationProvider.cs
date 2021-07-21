@@ -1,18 +1,16 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
-using QckMox.Configs;
+using QckMox.IO;
 
-namespace QckMox
+namespace QckMox.Configuration
 {
     internal interface IQckMoxConfigurationProvider
     {
         QckMoxAppConfig GetGlobalConfig();
         QckMoxConfig GetRequestConfig(string requestUri);
-        QckMoxConfig GetFolderConfig(string folderPath);
         QckMoxResponseFileConfig GetResponseFileConfig(string filePath, QckMoxConfig folderConfig);
     }
 
@@ -25,8 +23,11 @@ namespace QckMox
         {
             var appConfig = global.Value;
             var defaultConfig = QckMoxAppConfig.Default;
-            var config = defaultConfig.Merge(appConfig);
-            _config = ResolveResponseMapPaths(config.ResponseSource, config);
+            var config = defaultConfig
+                            .Merge(appConfig)
+                            .ResolveResponseMapPaths();
+
+            _config = config;
             _fileProvider = fileProvider;
         }
 
@@ -38,12 +39,11 @@ namespace QckMox
         public QckMoxConfig GetRequestConfig(string requestUri)
         {
             // merge all folder configs referenced by the requestUri
-            var global = _config;
-            var breadCrumb = global.ResponseSource;
+            var breadCrumb = string.Empty;
             var queue = new Queue<string>();
             queue.Enqueue(breadCrumb);
 
-            QckMoxConfig config = global;
+            QckMoxConfig config = _config;
 
             var uris = requestUri.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
             foreach(var uri in uris)
@@ -54,23 +54,24 @@ namespace QckMox
 
             while(queue.Count > 0)
             {
-                var folder = queue.Dequeue();
-                var temp = GetFolderConfig(folder);
+                var uri = queue.Dequeue();
+                var temp = GetUriConfig(uri);
                 config = temp == null ? config : config.Merge(temp);
             }
 
             return config;
         }
 
-        public QckMoxConfig GetFolderConfig(string folderPath)
+        private QckMoxConfig GetUriConfig(string requestUri)
         {
-            var configFile = Path.Combine(folderPath, QckMoxConfig.FOLDER_CONFIG_FILE);
-            var content = _fileProvider.GetContent(configFile);
+            var configFile = Path.Combine(requestUri, QckMoxConfig.FOLDER_CONFIG_FILE);
+            var configFilePath = Path.Combine(_config.ResponseSource, configFile);
+            var content = _fileProvider.GetContent(configFilePath);
             if(content is null) { return null; }
 
             var obj = JObject.Parse(content);
-            var config = obj.ToObject<QckMoxConfig>();
-            config = ResolveResponseMapPaths(folderPath, config);
+            var config = obj.ToObject<QckMoxConfig>()
+                            .ResolveResponseMapPaths(requestUri, _config.ResponseSource);
 
             return config;
         }
@@ -88,22 +89,6 @@ namespace QckMox
             var newConfig = new QckMoxResponseFileConfig();
             newConfig = newConfig.Merge(folderConfig.Response);
             return newConfig.Merge(config);
-        }
-
-        private T ResolveResponseMapPaths<T>(string basePath, T config) where T: QckMoxConfig
-        {
-            if(config.ResponseMap?.Any() is true)
-            {
-                foreach(var item in config.ResponseMap)
-                {
-                    if (Path.IsPathRooted(item.Value) is false)
-                    {
-                        config.ResponseMap[item.Key] = Path.Combine(basePath, item.Value);
-                    }
-                }
-            }
-
-            return config;
         }
     }
 }

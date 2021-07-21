@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
 
-namespace QckMox.Configs
+namespace QckMox.Configuration
 {
     internal class QckMoxResponseFileConfig : QckMoxResponseFileConfigValues
     {

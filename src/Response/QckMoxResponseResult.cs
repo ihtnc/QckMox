@@ -1,4 +1,4 @@
-namespace QckMox
+namespace QckMox.Response
 {
     internal enum QckMoxResponseResult
     {

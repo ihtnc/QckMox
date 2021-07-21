@@ -6,9 +6,10 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using QckMox.Configs;
+using QckMox.Configuration;
+using QckMox.IO;
 
-namespace QckMox
+namespace QckMox.Response
 {
     internal interface IQckMoxResponseFileProvider
     {
@@ -77,9 +78,7 @@ namespace QckMox
 
         private ResponseFileMatchResult MatchAgainstHttpMethod(HttpRequest request, QckMoxConfig requestConfig, bool includeQueryString)
         {
-            var methodString = GetMapMethodString(request);
-            var queryString = includeQueryString ? GetMapQueryString(request, requestConfig) : string.Empty;
-            var requestString = $"{methodString} {queryString.TrimStart('?')}".Trim();
+            var requestString = GetRequestString(request, requestConfig, excludeResource: true, excludeQueryString: includeQueryString is false);
             var responseFile = $"{requestString}.json";
             var mockPath = GetMockPath(request);
             var globalConfig = _config.GetGlobalConfig();
@@ -162,16 +161,16 @@ namespace QckMox
             return _config.GetRequestConfig(mockPath);
         }
 
-        private string GetRequestString(HttpRequest request, QckMoxConfig requestConfig)
+        private string GetRequestString(HttpRequest request, QckMoxConfig requestConfig, bool excludeResource = false, bool excludeQueryString = false)
         {
             var config = requestConfig;
 
             var mapMethodString = GetMapMethodString(request);
-            var mapUriString = GetMockPath(request);
-            var mapQueryString = GetMapQueryString(request, config);
+            var mapUriString = excludeResource is true ? string.Empty : GetMockPath(request).Replace('\\', '/');
+            var mapQueryString = excludeQueryString is true ? string.Empty : GetMapQueryString(request, config);
 
             var requestString = $"{mapMethodString} {mapUriString}{mapQueryString}";
-            return requestString;
+            return requestString.Trim();
         }
 
         private static string GetMapMethodString(HttpRequest request)

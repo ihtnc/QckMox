@@ -1,7 +1,7 @@
 using System.IO;
 using System.Reflection;
 
-namespace QckMox
+namespace QckMox.IO
 {
     internal interface IFileProvider
     {

@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
-using QckMox.Configs;
+using QckMox.Configuration;
+using QckMox.IO;
+using QckMox.Response;
 using NSubstitute;
 
 namespace QckMox.Tests.Integration.TestHelper
@@ -28,7 +30,7 @@ namespace QckMox.Tests.Integration.TestHelper
         public QckMoxServer()
         {
             FileProvider = Substitute.For<IFileProvider>();
-            AppConfig = QckMoxAppConfig.GetDefault();
+            AppConfig = QckMoxAppConfig.GetDefaultValues();
         }
 
         public async Task<TestServer> StartServer(Action<QckMoxAppConfig> appConfigSetter = null)

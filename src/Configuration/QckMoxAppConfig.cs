@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace QckMox.Configs
+namespace QckMox.Configuration
 {
     internal class QckMoxAppConfig : QckMoxAppConfigValue
     {
@@ -13,9 +13,9 @@ namespace QckMox.Configs
 
         public const string CONFIG_KEY = "QckMox";
 
-        public static readonly QckMoxAppConfig Default = GetDefault();
+        public static readonly QckMoxAppConfig Default = GetDefaultValues();
 
-        public static QckMoxAppConfig GetDefault() => new QckMoxAppConfig
+        public static QckMoxAppConfig GetDefaultValues() => new QckMoxAppConfig
         {
             EndPointConfigValue = "/api/qckmox/",
             ResponseSourceConfigValue = ".qckmox",
@@ -45,6 +45,12 @@ namespace QckMox.Configs
                 }
             }
         };
+
+        public QckMoxAppConfig ResolveResponseMapPaths()
+        {
+            base.ResolveResponseMapPaths(string.Empty, ResponseSource);
+            return this;
+        }
     }
 
     internal class QckMoxAppConfigValue : QckMoxConfig

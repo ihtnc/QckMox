@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.IO;
-using QckMox.Configs;
+using QckMox.Configuration;
 
-namespace QckMox
+namespace QckMox.Response
 {
     internal class QckMoxResponse
     {
@@ -46,7 +46,7 @@ namespace QckMox
         };
     }
 
-    public class QckMoxResponseData
+    internal class QckMoxResponseData
     {
         public string ContentType { get; set; }
         public Dictionary<string, string> Headers { get; set; }

@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
-using QckMox.Configs;
+using QckMox.Configuration;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -123,7 +123,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
@@ -215,7 +215,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
@@ -280,7 +280,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
@@ -328,7 +328,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
@@ -379,7 +379,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                parentStructure = Path.Combine(parentStructure, $"{folder}");
+                parentStructure = Path.Combine(parentStructure, folder);
                 subFolderCount--;
             }
             var parentConfigPath = Path.Combine(qcxmox.AppConfig.ResponseSource, parentStructure, QckMoxConfig.FOLDER_CONFIG_FILE);
@@ -453,7 +453,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
@@ -500,7 +500,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 

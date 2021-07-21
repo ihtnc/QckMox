@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
+using QckMox.Configuration;
 using FluentAssertions;
 using NSubstitute;
 using Xunit;
@@ -19,7 +20,7 @@ namespace QckMox.Tests.Integration.Configuration
             var qcxmox = new QckMoxServer();
 
             var resource = $"{Guid.NewGuid():N}";
-            var responsePath = $"{qcxmox.AppConfig.ResponseSource}\\{resource}\\GET.json";
+            var responsePath = Path.Combine(QckMoxAppConfig.Default.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
@@ -32,7 +33,7 @@ namespace QckMox.Tests.Integration.Configuration
             var server = await qcxmox.StartServer();
 
             // ACT
-            var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resource);
+            var requestUri = Path.Combine(QckMoxAppConfig.Default.EndPoint, resource);
             var context = await server.SendAsync(c =>
             {
                 c.Request.Method = HttpMethods.Get;
@@ -56,7 +57,7 @@ namespace QckMox.Tests.Integration.Configuration
 
             var resource = $"{Guid.NewGuid():N}";
             var mockedResponseSource = "Mocks";
-            var responsePath = $"{mockedResponseSource}\\{resource}\\GET.json";
+            var responsePath = Path.Combine(mockedResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
@@ -72,7 +73,7 @@ namespace QckMox.Tests.Integration.Configuration
             });
 
             // ACT
-            var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resource);
+            var requestUri = Path.Combine(QckMoxAppConfig.Default.EndPoint, resource);
             var context = await server.SendAsync(c =>
             {
                 c.Request.Method = HttpMethods.Get;
@@ -101,11 +102,11 @@ namespace QckMox.Tests.Integration.Configuration
             while(subFolderCount > 0)
             {
                 var folder = $"{Guid.NewGuid():N}";
-                folderStructure = Path.Combine(folderStructure, $"{folder}");
+                folderStructure = Path.Combine(folderStructure, folder);
                 subFolderCount--;
             }
 
-            var responsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, folderStructure, "GET.json");
+            var responsePath = Path.Combine(QckMoxAppConfig.Default.ResponseSource, folderStructure, "GET.json");
             var content = $"{{'data':'{Guid.NewGuid():N}'}}";
 
             qcxmox.FileProvider
@@ -118,7 +119,7 @@ namespace QckMox.Tests.Integration.Configuration
             var server = await qcxmox.StartServer();
 
             // ACT
-            var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, folderStructure);
+            var requestUri = Path.Combine(QckMoxAppConfig.Default.EndPoint, folderStructure);
             var context = await server.SendAsync(c =>
             {
                 c.Request.Method = HttpMethods.Get;

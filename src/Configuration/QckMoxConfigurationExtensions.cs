@@ -1,7 +1,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace QckMox
+namespace QckMox.Configuration
 {
     internal static class QckMoxConfigurationExtensions
     {
