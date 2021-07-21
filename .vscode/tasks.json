@@ -114,6 +114,21 @@
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": ["QckMox.Demo.ResponseMap: copy-mocks"],
+        },
+
+
+        // QckMox.Tests.Integration
+        {
+            "label": "QckMox.Tests.Integration: build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/tests/integration/QckMox.Tests.Integration.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile"
         }
     ]
 }
