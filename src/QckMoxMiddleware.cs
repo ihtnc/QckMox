@@ -24,17 +24,14 @@ namespace QckMox
             var isMockRequest = context.Request.Path.Value.StartsWith(config.EndPoint, StringComparison.OrdinalIgnoreCase);
 
             // mock not needed so let the request pass through
-            if(config.Disabled || isMockRequest is false)
+            if(config.Disabled is false && isMockRequest is true)
             {
-                await _next.Invoke(context);
+                // respond to the request with a mock value
+                var responseWritten = await _responseWriter.Write(context);
+                if (responseWritten is true) { return; }
             }
 
-            // respond to the request with a mock value
-            var responseWritten = await _responseWriter.Write(context);
-            if (responseWritten is false)
-            {
-                await _next.Invoke(context);
-            }
+            await _next.Invoke(context);
         }
     }
 }

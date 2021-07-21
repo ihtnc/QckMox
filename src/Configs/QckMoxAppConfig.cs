@@ -13,7 +13,9 @@ namespace QckMox.Configs
 
         public const string CONFIG_KEY = "QckMox";
 
-        public static readonly QckMoxAppConfig Default = new QckMoxAppConfig
+        public static readonly QckMoxAppConfig Default = GetDefault();
+
+        public static QckMoxAppConfig GetDefault() => new QckMoxAppConfig
         {
             EndPointConfigValue = "/api/qckmox/",
             ResponseSourceConfigValue = ".qckmox",
