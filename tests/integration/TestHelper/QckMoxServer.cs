@@ -12,6 +12,7 @@ using Microsoft.Extensions.Options;
 using QckMox.Configuration;
 using QckMox.IO;
 using QckMox.Response;
+using QckMox.Matcher;
 using NSubstitute;
 
 namespace QckMox.Tests.Integration.TestHelper
@@ -58,8 +59,17 @@ namespace QckMox.Tests.Integration.TestHelper
                                     appConfigSetter?.Invoke(AppConfig);
                                     return Options.Create<QckMoxAppConfig>(AppConfig);
                                 })
+
                                 .AddSingleton<IFileProvider>(services => FileProvider)
                                 .AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
+
+                                .AddSingleton<IQckMoxMatcher, ResponseMapMatcher>()
+                                .AddSingleton<IQckMoxMatcher, RequestParameterMatcher>()
+                                .AddSingleton<IQckMoxMatcher, RequestMethodMatcher>()
+
+                                .AddSingleton<IQckMoxCustomMatchResultHandler, QckMoxCustomMatchResultHandler>()
+                                .AddSingleton<IQckMoxDefaultMatchResultHandler, QckMoxDefaultMatchResultHandler>()
+
                                 .AddSingleton<IQckMoxResponseFileProvider, QckMoxResponseFileProvider>()
                                 .AddSingleton<IQckMoxResponseWriter, QckMoxResponseWriter>();
                         })

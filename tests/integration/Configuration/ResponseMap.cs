@@ -28,11 +28,12 @@ namespace QckMox.Tests.Integration.Configuration
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath))
+                .GetContent(Arg.Any<string>())
                 .Returns(null as string);
+
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var folderStructure = string.Empty;
             while(subFolderCount > 0)
@@ -93,14 +94,15 @@ namespace QckMox.Tests.Integration.Configuration
             var otherContent = $"{{'data':'otherContent'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath, otherResponsePath))
+                .GetContent(Arg.Any<string>())
                 .Returns(null as string);
+
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
             qcxmox.FileProvider
-                .GetContent(otherResponsePath)
-                .Returns(content);
+                .GetStreamContent(otherResponsePath)
+                .ReturnsAsStream(otherContent);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resource);
             var server = await qcxmox.StartServer(config =>
@@ -145,16 +147,15 @@ namespace QckMox.Tests.Integration.Configuration
             var otherContent = $"{{'data':'{otherResource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig, otherResponsePath))
+                .GetContent(ArgAny.Except(folderConfig))
                 .Returns(null as string);
-
             qcxmox.FileProvider
                 .GetContent(folderConfig)
                 .Returns(config);
 
             qcxmox.FileProvider
-                .GetContent(otherResponsePath)
-                .Returns(otherContent);
+                .GetStreamContent(otherResponsePath)
+                .ReturnsAsStream(otherContent);
 
             var server = await qcxmox.StartServer();
 
@@ -201,14 +202,15 @@ namespace QckMox.Tests.Integration.Configuration
 ";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath, configPath))
+                .GetContent(ArgAny.Except(configPath))
                 .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
             qcxmox.FileProvider
                 .GetContent(configPath)
                 .Returns(config);
+
+            qcxmox.FileProvider
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, folderStructure, resource);
             var server = await qcxmox.StartServer();
@@ -252,14 +254,15 @@ namespace QckMox.Tests.Integration.Configuration
 ";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath, configPath))
+                .GetContent(ArgAny.Except(configPath))
                 .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
             qcxmox.FileProvider
                 .GetContent(configPath)
                 .Returns(config);
+
+            qcxmox.FileProvider
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, "folder\\subfolder", resource);
             var server = await qcxmox.StartServer();
@@ -302,14 +305,15 @@ namespace QckMox.Tests.Integration.Configuration
 ";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath, configPath))
+                .GetContent(ArgAny.Except(configPath))
                 .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
             qcxmox.FileProvider
                 .GetContent(configPath)
                 .Returns(config);
+
+            qcxmox.FileProvider
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, uri, resource);
             var server = await qcxmox.StartServer();
@@ -351,16 +355,15 @@ namespace QckMox.Tests.Integration.Configuration
             var otherContent = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(otherFolderConfig, otherFolderResponsePath))
+                .GetContent(ArgAny.Except(otherFolderConfig))
                 .Returns(null as string);
-
             qcxmox.FileProvider
                 .GetContent(otherFolderConfig)
                 .Returns(otherConfig);
 
             qcxmox.FileProvider
-                .GetContent(otherFolderResponsePath)
-                .Returns(otherContent);
+                .GetStreamContent(otherFolderResponsePath)
+                .ReturnsAsStream(otherContent);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.IO;
-using QckMox.Configuration;
 
 namespace QckMox.Response
 {
@@ -8,7 +7,7 @@ namespace QckMox.Response
     {
         public QckMoxResponseResult Result { get; set; }
 
-        public QckMoxResponseData Data { get; set; }
+        public QckMoxMatchResult Data { get; set; }
 
         public static QckMoxResponse RedirectResponse => new QckMoxResponse
         {
@@ -16,40 +15,33 @@ namespace QckMox.Response
             Data = null
         };
 
-        public static QckMoxResponse GetErrorResponse(QckMoxResponseFileConfig config) => new QckMoxResponse
+        public static QckMoxResponse GetErrorResponse(IReadOnlyDictionary<string, string> headers) => new QckMoxResponse
         {
             Result = QckMoxResponseResult.Error,
-            Data = new QckMoxResponseData
+            Data = new QckMoxMatchResult
             {
-                Headers = config.Headers
+                ResponseHeaders = new Dictionary<string, string>(headers)
             }
         };
 
-        public static QckMoxResponse GetNotFoundResponse(QckMoxResponseFileConfig config) => new QckMoxResponse
+        public static QckMoxResponse GetNotFoundResponse(IReadOnlyDictionary<string, string> headers) => new QckMoxResponse
         {
             Result = QckMoxResponseResult.NotFound,
-            Data = new QckMoxResponseData
+            Data = new QckMoxMatchResult
             {
-                Headers = config.Headers
+                ResponseHeaders = new Dictionary<string, string>(headers)
             }
         };
 
-        public static QckMoxResponse GetSuccessResponse(Stream content, QckMoxResponseFileConfig config) => new QckMoxResponse
+        public static QckMoxResponse GetSuccessResponse(Stream content, string contentType, IReadOnlyDictionary<string, string> headers) => new QckMoxResponse
         {
             Result = QckMoxResponseResult.Success,
-            Data = new QckMoxResponseData
+            Data = new QckMoxMatchResult
             {
-                ContentType = config.ContentType,
-                Headers = config.Headers,
+                ContentType = contentType,
+                ResponseHeaders = new Dictionary<string, string>(headers),
                 Content = content
             }
         };
-    }
-
-    internal class QckMoxResponseData
-    {
-        public string ContentType { get; set; }
-        public Dictionary<string, string> Headers { get; set; }
-        public Stream Content { get; set; }
     }
 }

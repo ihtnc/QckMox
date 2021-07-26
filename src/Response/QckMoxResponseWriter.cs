@@ -24,7 +24,7 @@ namespace QckMox.Response
 
         public async Task<bool> Write(HttpContext context)
         {
-            var response = _file.GetResponse(context.Request);
+            var response = await _file.GetResponse(context.Request);
 
             switch(response.Result)
             {
@@ -49,7 +49,7 @@ namespace QckMox.Response
 
             context.Response.ContentType = response.Data.ContentType;
 
-            var headers = response.Data?.Headers ?? new Dictionary<string, string>();
+            var headers = response.Data?.ResponseHeaders ?? new Dictionary<string, string>();
             foreach(var header in headers)
             {
                 context.Response.Headers.Add(header.Key, header.Value);
@@ -57,6 +57,7 @@ namespace QckMox.Response
 
             if (response.Data?.Content is not null)
             {
+                response.Data.Content.Position = 0;
                 await response.Data.Content.CopyToAsync(context.Response.Body);
             }
 

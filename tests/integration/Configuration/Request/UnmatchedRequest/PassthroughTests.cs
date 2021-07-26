@@ -85,8 +85,8 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
                 .GetContent(ArgAny.Except(responsePath))
                 .Returns(null as string);
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {

@@ -22,7 +22,7 @@ namespace QckMox
         public async Task Invoke(HttpContext context)
         {
             // check if we need to mock the response
-            var config = _configProvider.GetGlobalConfig();
+            var config = await _configProvider.GetGlobalConfig();
             var isMockRequest = context.Request.Path.Value.StartsWith(config.EndPoint, StringComparison.OrdinalIgnoreCase);
 
             // mock not needed so let the request pass through

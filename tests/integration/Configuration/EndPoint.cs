@@ -24,11 +24,12 @@ namespace QckMox.Tests.Integration.Configuration
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath))
+                .GetContent(Arg.Any<string>())
                 .Returns(null as string);
+
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var server = await qcxmox.StartServer();
 
@@ -60,11 +61,12 @@ namespace QckMox.Tests.Integration.Configuration
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath))
+                .GetContent(Arg.Any<string>())
                 .Returns(null as string);
+
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var mockedEndPoint = "/api/mocks/";
             var server = await qcxmox.StartServer(config =>
@@ -103,11 +105,12 @@ namespace QckMox.Tests.Integration.Configuration
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath))
+                .GetContent(Arg.Any<string>())
                 .Returns(null as string);
+
             qcxmox.FileProvider
-                .GetContent(responsePath)
-                .Returns(content);
+                .GetStreamContent(responsePath)
+                .ReturnsAsStream(content);
 
             var server = await qcxmox.StartServer(config =>
             {

@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json.Linq;
 using QckMox.IO;
@@ -9,9 +11,10 @@ namespace QckMox.Configuration
 {
     internal interface IQckMoxConfigurationProvider
     {
-        QckMoxAppConfig GetGlobalConfig();
-        QckMoxConfig GetRequestConfig(string requestUri);
-        QckMoxResponseFileConfig GetResponseFileConfig(string filePath, QckMoxConfig folderConfig);
+        Task<QckMoxAppConfig> GetGlobalConfig();
+        Task<QckMoxConfig> GetRequestConfig(HttpRequest request);
+        Task<QckMoxResponseFileConfig> GetResponseFileConfig(string filePath);
+        Task<QckMoxResponseFileConfig> GetResponseStreamConfig(Stream fileContent);
     }
 
     internal class QckMoxConfigurationProvider : IQckMoxConfigurationProvider
@@ -31,21 +34,23 @@ namespace QckMox.Configuration
             _fileProvider = fileProvider;
         }
 
-        public QckMoxAppConfig GetGlobalConfig()
+        public async Task<QckMoxAppConfig> GetGlobalConfig()
         {
-            return _config;
+            return await Task.FromResult(_config);
         }
 
-        public QckMoxConfig GetRequestConfig(string requestUri)
+        public async Task<QckMoxConfig> GetRequestConfig(HttpRequest request)
         {
-            // merge all folder configs referenced by the requestUri
+            var mockRequestPath = request.Path.Value.Replace(_config.EndPoint, string.Empty, StringComparison.OrdinalIgnoreCase);
+
+            // merge all folder configs referenced by the mockRequestPath
             var breadCrumb = string.Empty;
             var queue = new Queue<string>();
             queue.Enqueue(breadCrumb);
 
             QckMoxConfig config = _config;
 
-            var uris = requestUri.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
+            var uris = mockRequestPath.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
             foreach(var uri in uris)
             {
                 breadCrumb = Path.Combine(breadCrumb, uri);
@@ -55,18 +60,18 @@ namespace QckMox.Configuration
             while(queue.Count > 0)
             {
                 var uri = queue.Dequeue();
-                var temp = GetUriConfig(uri);
+                var temp = await GetUriConfig(uri);
                 config = temp == null ? config : config.Merge(temp);
             }
 
             return config;
         }
 
-        private QckMoxConfig GetUriConfig(string requestUri)
+        private async Task<QckMoxConfig> GetUriConfig(string requestUri)
         {
             var configFile = Path.Combine(requestUri, QckMoxConfig.FOLDER_CONFIG_FILE);
             var configFilePath = Path.Combine(_config.ResponseSource, configFile);
-            var content = _fileProvider.GetContent(configFilePath);
+            var content = await _fileProvider.GetContent(configFilePath);
             if(content is null) { return null; }
 
             var obj = JObject.Parse(content);
@@ -76,19 +81,22 @@ namespace QckMox.Configuration
             return config;
         }
 
-        public QckMoxResponseFileConfig GetResponseFileConfig(string filePath, QckMoxConfig folderConfig)
+        public async Task<QckMoxResponseFileConfig> GetResponseFileConfig(string filePath)
         {
-            var content = _fileProvider.GetContent(filePath);
-            if(content == null) { return null; }
+            var content = await _fileProvider.GetStreamContent(filePath);
+            if(content is null) { return null; }
 
-            var file = JObject.Parse(content);
-            var prop = file.SelectToken($"{QckMoxResponseFileConfig.CONFIG_KEY}");
+            return await GetResponseStreamConfig(content);
+        }
+
+        public async Task<QckMoxResponseFileConfig> GetResponseStreamConfig(Stream jsonFileContent)
+        {
+            var content = await JsonHelper.ToJObject(jsonFileContent);
+            var prop = content.SelectToken($"{QckMoxResponseFileConfig.CONFIG_KEY}");
             if(prop?.HasValues is not true) { return null; }
 
             var config = prop.ToObject<QckMoxResponseFileConfig>();
-            var newConfig = new QckMoxResponseFileConfig();
-            newConfig = newConfig.Merge(folderConfig.Response);
-            return newConfig.Merge(config);
+            return config;
         }
     }
 }
