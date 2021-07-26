@@ -169,7 +169,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             var qcxmox = new QckMoxServer();
 
             var folder = $"{Guid.NewGuid():N}";
-            var folderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, folder, QckMoxConfig.FOLDER_CONFIG_FILE);
             var otherFolder = $"{Guid.NewGuid():N}";
             var otherFolderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, otherFolder, QckMoxConfig.FOLDER_CONFIG_FILE);
 
