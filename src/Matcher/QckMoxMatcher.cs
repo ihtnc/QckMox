@@ -104,8 +104,8 @@ namespace QckMox.Matcher
 
             if(parts.Any() is false) { return string.Empty; }
 
-            var queryString = string.Join('&', parts);
-            return $"?{queryString}";
+            var parameterString = string.Join('&', parts);
+            return parameterString;
         }
 
         internal static QckMoxMatchResult NoMatchResult => new QckMoxMatchResult { Content = null };
