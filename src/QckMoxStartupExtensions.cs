@@ -31,9 +31,13 @@ namespace QckMox
                            .AddDependencies();
         }
 
-        public static IServiceCollection AddQckMoxCustomMatcher<T>(this IServiceCollection services) where T : IQckMoxCustomMatcher, new()
+        public static IServiceCollection AddQckMoxCustomMatcher<T>(this IServiceCollection services) where T : IQckMoxCustomMatcher
         {
-            return services.AddSingleton<IQckMoxCustomMatcher>(provider => new T());
+            return services.AddSingleton<IQckMoxCustomMatcher>(provider =>
+            {
+                var obj = (T) ActivatorUtilities.CreateInstance(provider, typeof(T));
+                return obj;
+            });
         }
 
         internal static IServiceCollection AddDependencies(this IServiceCollection services)
