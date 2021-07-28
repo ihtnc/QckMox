@@ -13,7 +13,7 @@ namespace QckMox.Matcher
         public RequestParameterMatcher(IQckMoxConfigurationProvider config, IFileProvider file) : base(config, file)
         { }
 
-        protected internal override async Task<QckMoxMatchResult> InternalMatch(HttpRequest request, QckMoxConfig requestConfig)
+        public override async Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig requestConfig)
         {
             var config = requestConfig;
 

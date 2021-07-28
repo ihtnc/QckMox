@@ -33,16 +33,16 @@ namespace QckMox.Response
                 requestConfig = await _config.GetRequestConfig(request);
                 if(requestConfig.Disabled is true) { return QckMoxResponse.RedirectResponse; }
 
-                var matchResult = await _customMatcher.MatchResponse(request);
+                var matchResult = await _customMatcher.MatchResponse(request, requestConfig);
                 if (matchResult.MatchFound is false)
                 {
-                    matchResult = await _defaultMatcher.MatchResponse(request);
+                    matchResult = await _defaultMatcher.MatchResponse(request, requestConfig);
                 }
 
                 if(matchResult.MatchFound is false)
                 {
                     var isPassthrough = requestConfig.Request.UnmatchedRequest.Passthrough;
-                    return isPassthrough
+                    return isPassthrough is true
                         ? QckMoxResponse.RedirectResponse
                         : QckMoxResponse.GetNotFoundResponse(requestConfig.Response.Headers);
                 }

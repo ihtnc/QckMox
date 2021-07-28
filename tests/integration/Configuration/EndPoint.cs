@@ -19,8 +19,9 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
-            var responsePath = Path.Combine(QckMoxAppConfig.Default.ResponseSource, resource, "GET.json");
+            var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
@@ -34,7 +35,7 @@ namespace QckMox.Tests.Integration.Configuration
             var server = await qcxmox.StartServer();
 
             // ACT
-            var requestUri = Path.Combine(QckMoxAppConfig.Default.EndPoint, resource);
+            var requestUri = Path.Combine(defaultConfig.EndPoint, resource);
             var context = await server.SendAsync(c =>
             {
                 c.Request.Method = HttpMethods.Get;
@@ -56,8 +57,9 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
-            var responsePath = Path.Combine(QckMoxAppConfig.Default.ResponseSource, resource, "GET.json");
+            var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
@@ -71,7 +73,7 @@ namespace QckMox.Tests.Integration.Configuration
             var mockedEndPoint = "/api/mocks/";
             var server = await qcxmox.StartServer(config =>
             {
-                config.EndPointConfigValue = mockedEndPoint;
+                config.EndPoint = mockedEndPoint;
             });
 
             // ACT
@@ -99,9 +101,10 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
             var requestUri = Path.Combine("/api/active-endpoint/", resource);
-            var responsePath = Path.Combine(QckMoxAppConfig.Default.ResponseSource, resource, "GET.json");
+            var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
             qcxmox.FileProvider
@@ -116,7 +119,7 @@ namespace QckMox.Tests.Integration.Configuration
             {
                 if (useDefaultEndPoint is false)
                 {
-                    config.EndPointConfigValue = "/api/mocks/";
+                    config.EndPoint = "/api/mocks/";
                 }
             });
 

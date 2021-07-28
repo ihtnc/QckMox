@@ -10,7 +10,7 @@ namespace QckMox.Matcher
 {
     internal interface IQckMoxMatcher
     {
-        Task<QckMoxMatchResult> Match(HttpRequest request);
+        Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig config);
     }
 
     internal abstract class QckMoxMatcher : IQckMoxMatcher
@@ -31,13 +31,7 @@ namespace QckMox.Matcher
 
         public QckMoxAppConfig GlobalConfig { get; }
 
-        public virtual async Task<QckMoxMatchResult> Match(HttpRequest request)
-        {
-            var requestConfig = await _config.GetRequestConfig(request);
-            return await InternalMatch(request, requestConfig);
-        }
-
-        protected internal abstract Task<QckMoxMatchResult> InternalMatch(HttpRequest request, QckMoxConfig requestConfig);
+        public abstract Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig config);
 
         protected internal async Task<QckMoxMatchResult> GetMatchResult(string filePath, QckMoxResponseConfig responseConfig)
         {

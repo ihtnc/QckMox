@@ -47,8 +47,8 @@ namespace QckMox.Tests.Integration.Configuration
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resourceUri);
             var server = await qcxmox.StartServer(config =>
             {
-                config.ResponseMapConfigValue.Add($"GET {resourceUri}", resourcePath);
-                config.ResponseMapConfigValue.Add($"GET {resource}", "notexisting.json");
+                config.ResponseMap.Add($"GET {resourceUri}", resourcePath);
+                config.ResponseMap.Add($"GET {resource}", "notexisting.json");
             });
 
             // ACT
@@ -107,7 +107,7 @@ namespace QckMox.Tests.Integration.Configuration
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resource);
             var server = await qcxmox.StartServer(config =>
             {
-                config.ResponseMapConfigValue.Add($"GET {resource}", resourcePath);
+                config.ResponseMap.Add($"GET {resource}", resourcePath);
             });
 
             // ACT

@@ -5,6 +5,6 @@ namespace QckMox.Matcher
 {
     internal interface IQckMoxMatchResultHandler
     {
-        Task<QckMoxMatchResult> MatchResponse(HttpRequest request);
+        Task<QckMoxMatchResult> MatchResponse(HttpRequest request, QckMoxConfig config);
     }
 }

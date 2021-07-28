@@ -20,16 +20,15 @@ namespace QckMox.Matcher
             _matchers = matchers?.ToArray();
         }
 
-        public async Task<QckMoxMatchResult> MatchResponse(HttpRequest request)
+        public async Task<QckMoxMatchResult> MatchResponse(HttpRequest request, QckMoxConfig config)
         {
-            var requestConfig = await _config.GetRequestConfig(request);
-
             foreach(var matcher in _matchers)
             {
-                var matchResult = await matcher.Match(request);
+                var copy = config.Copy();
+                var matchResult = await matcher.Match(request, copy);
                 if(matchResult.MatchFound is true)
                 {
-                    return await GetMatchResult(matchResult, requestConfig.Response);
+                    return await GetMatchResult(matchResult, copy.Response);
                 }
             }
 

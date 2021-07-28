@@ -56,8 +56,11 @@ namespace QckMox.Tests.Integration.TestHelper
                             services
                                 .AddSingleton<IOptions<QckMoxAppConfig>>(provider =>
                                 {
-                                    appConfigSetter?.Invoke(AppConfig);
-                                    return Options.Create<QckMoxAppConfig>(AppConfig);
+                                    var defaultConfig = QckMoxAppConfig.GetDefaultValues();
+                                    appConfigSetter?.Invoke(defaultConfig);
+                                    AppConfig = defaultConfig;
+
+                                    return Options.Create<QckMoxAppConfig>(defaultConfig);
                                 })
 
                                 .AddSingleton<IFileProvider>(services => FileProvider)

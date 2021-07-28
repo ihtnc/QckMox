@@ -25,7 +25,7 @@ namespace QckMox.Configuration
         public QckMoxConfigurationProvider(IOptions<QckMoxAppConfig> global, IFileProvider fileProvider)
         {
             var appConfig = global.Value;
-            var defaultConfig = QckMoxAppConfig.Default;
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var config = defaultConfig
                             .Merge(appConfig)
                             .ResolveResponseMapPaths();

@@ -50,7 +50,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
-                config.RequestConfigValue.UnmatchedRequestConfigValue.PassthroughConfigValue = true;
+                config.Request.UnmatchedRequest.Passthrough = true;
             });
 
             // ACT
@@ -90,7 +90,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
-                config.RequestConfigValue.UnmatchedRequestConfigValue.PassthroughConfigValue = true;
+                config.Request.UnmatchedRequest.Passthrough = true;
             });
 
             // ACT
@@ -345,7 +345,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
-                config.RequestConfigValue.UnmatchedRequestConfigValue.PassthroughConfigValue = true;
+                config.Request.UnmatchedRequest.Passthrough = true;
             });
 
             // ACT
@@ -521,7 +521,7 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
-                config.RequestConfigValue.UnmatchedRequestConfigValue.PassthroughConfigValue = true;
+                config.Request.UnmatchedRequest.Passthrough = true;
             });
 
             // ACT

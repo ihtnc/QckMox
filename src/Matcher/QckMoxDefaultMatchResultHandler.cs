@@ -18,11 +18,12 @@ namespace QckMox.Matcher
             _matchers = SortMatchers(defaultMatchers);
         }
 
-        public async Task<QckMoxMatchResult> MatchResponse(HttpRequest request)
+        public async Task<QckMoxMatchResult> MatchResponse(HttpRequest request, QckMoxConfig config)
         {
             foreach(var matcher in _matchers)
             {
-                var matchResult = await matcher.Match(request);
+                var copy = config.Copy();
+                var matchResult = await matcher.Match(request, copy);
                 if(matchResult.MatchFound is true)
                 {
                     return matchResult;
