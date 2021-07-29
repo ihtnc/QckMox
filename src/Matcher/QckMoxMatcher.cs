@@ -1,10 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using QckMox.Configuration;
 using QckMox.IO;
+using QckMox.Request;
 
 namespace QckMox.Matcher
 {
@@ -15,29 +13,30 @@ namespace QckMox.Matcher
 
     internal abstract class QckMoxMatcher : IQckMoxMatcher
     {
-        private readonly IQckMoxConfigurationProvider _config;
-        private readonly IFileProvider _file;
+        protected IQckMoxConfigurationProvider ConfigProvider { get; }
+        protected IFileProvider FileProvider { get; }
+        protected IQckMoxRequestConverter Converter { get; }
+        protected QckMoxAppConfig GlobalConfig { get; }
 
-        public QckMoxMatcher(IQckMoxConfigurationProvider config, IFileProvider file)
+        public QckMoxMatcher(IQckMoxConfigurationProvider config, IFileProvider file, IQckMoxRequestConverter converter)
         {
-            _config = config;
+            ConfigProvider = config;
 
             var task = config.GetGlobalConfig();
             task.Wait();
             GlobalConfig = task.Result;
 
-            _file = file;
+            FileProvider = file;
+            Converter = converter;
         }
-
-        public QckMoxAppConfig GlobalConfig { get; }
 
         public abstract Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig config);
 
         protected internal async Task<QckMoxMatchResult> GetMatchResult(string filePath, QckMoxResponseConfig responseConfig)
         {
-            var config = await _config.GetResponseFileConfig(filePath);
+            var config = await ConfigProvider.GetResponseFileConfig(filePath);
             config = config.Merge(responseConfig);
-            var fileContent = await _file.GetStreamContent(filePath);
+            var fileContent = await FileProvider.GetStreamContent(filePath);
             var content = fileContent is not null
                 ? await QckMoxMatchResultHelper.GetResponseContent(fileContent, config)
                 : null;
@@ -52,60 +51,9 @@ namespace QckMox.Matcher
 
         protected internal string GetResponseFile(HttpRequest request, QckMoxConfig requestConfig, bool excludeResource = false, bool excludeParameters = false)
         {
-            var requestString = GetRequestString(request, requestConfig, excludeResource: excludeResource, excludeParameters: excludeParameters);
-            return $"{requestString}.json";
-        }
-
-        protected internal string GetRequestString(HttpRequest request, QckMoxConfig requestConfig, bool excludeResource = false, bool excludeParameters = false)
-        {
-            var config = requestConfig;
-
-            var methodString = GetMethodString(request);
-            var uriString = excludeResource is true ? string.Empty : GetResourceString(request).Replace('\\', '/');
-            var parameterString = excludeParameters is true ? string.Empty : GetParameterString(request, config);
-
-            var requestString = $"{methodString} {uriString}{parameterString}";
-            return requestString.Trim();
-        }
-
-        protected internal static string GetMethodString(HttpRequest request)
-        {
-            return request.Method.ToUpper();
-        }
-
-        protected internal string GetResourceString(HttpRequest request)
-        {
-            return request.Path.Value.Replace(GlobalConfig.EndPoint, string.Empty, StringComparison.OrdinalIgnoreCase);
-        }
-
-        protected internal static string GetParameterString(HttpRequest request, QckMoxConfig requestConfig)
-        {
-            var parts = new List<string>();
-
-            if(requestConfig.Request.MatchQuery?.Any() is true)
-            {
-                foreach(var query in requestConfig.Request.MatchQuery)
-                {
-                    if(!request.Query.ContainsKey(query)) { continue; }
-
-                    parts.Add($"{requestConfig.Request.QueryMapPrefix}{query}={request.Query[query]}");
-                }
-            }
-
-            if(requestConfig.Request.MatchHeader?.Any() is true)
-            {
-                foreach(var header in requestConfig.Request.MatchHeader)
-                {
-                    if(!request.Headers.ContainsKey(header)) { continue; }
-
-                    parts.Add($"{requestConfig.Request.HeaderMapPrefix}{header}={request.Headers[header]}");
-                }
-            }
-
-            if(parts.Any() is false) { return string.Empty; }
-
-            var parameterString = string.Join('&', parts);
-            return parameterString;
+            var requestString = Converter.ToRequestString(request, requestConfig, excludeResource: excludeResource, excludeParameters: excludeParameters);
+            var responseFile = $"{requestString}".Trim();
+            return $"{responseFile}.json";
         }
 
         internal static QckMoxMatchResult NoMatchResult => new QckMoxMatchResult { Content = null };

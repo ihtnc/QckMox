@@ -3,13 +3,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using QckMox.Configuration;
 using QckMox.IO;
+using QckMox.Request;
 
 namespace QckMox.Matcher
 {
     internal class ResponseMapMatcher : QckMoxMatcher
     {
 
-        public ResponseMapMatcher(IQckMoxConfigurationProvider config, IFileProvider file) : base(config, file)
+        public ResponseMapMatcher(IQckMoxConfigurationProvider config, IFileProvider file, IQckMoxRequestConverter converter) : base(config, file, converter)
         { }
 
         public override async Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig requestConfig)
@@ -21,7 +22,8 @@ namespace QckMox.Matcher
                 return NoMatchResult;
             }
 
-            var requestString = GetRequestString(request, config);
+            var converted = Converter.ToRequestString(request, config);
+            var requestString = $"{converted}";
 
             var responseFile = string.Empty;
             if(config.ResponseMap.ContainsKey(requestString))

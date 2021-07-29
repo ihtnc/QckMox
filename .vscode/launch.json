@@ -96,23 +96,6 @@
         },
 
 
-        // QckMox.Tests
-        {
-            "name": "QckMox.Tests.Integration",
-            "type": "coreclr",
-            "request": "launch",
-            "preLaunchTask": "QckMox.Tests.Integration: build",
-            // If you have changed target frameworks, make sure to update the program path.
-            "program": "QckMox.Tests.Integration.dll",
-            "args": [],
-            "cwd": "${workspaceFolder}/tests/integration/bin/Debug/netcoreapp5.0/",
-            "stopAtEntry": false,
-            "env": {
-                "ASPNETCORE_ENVIRONMENT": "Development"
-            }
-        },
-
-
         {
             "name": ".NET Core Attach",
             "type": "coreclr",

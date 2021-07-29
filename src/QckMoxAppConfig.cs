@@ -23,8 +23,8 @@ namespace QckMox
                     MatchHttpMethod = false,
                     Passthrough = false
                 },
-                QueryMapPrefix = string.Empty,
-                HeaderMapPrefix = "qckmox-",
+                QueryTag = QckMoxRequestConfig.DEFAULT_QUERY_TAG,
+                HeaderTag = QckMoxRequestConfig.DEFAULT_HEADER_TAG,
                 MatchHeader = new string[0],
                 MatchQuery = new string[0]
             },

@@ -5,8 +5,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using QckMox.Configuration;
 using QckMox.IO;
-using QckMox.Response;
 using QckMox.Matcher;
+using QckMox.Request;
+using QckMox.Response;
 
 namespace QckMox
 {
@@ -48,6 +49,8 @@ namespace QckMox
                            .AddSingleton<IQckMoxMatcher, ResponseMapMatcher>()
                            .AddSingleton<IQckMoxMatcher, RequestParameterMatcher>()
                            .AddSingleton<IQckMoxMatcher, RequestMethodMatcher>()
+
+                           .AddSingleton<IQckMoxRequestConverter, QckMoxRequestConverter>()
 
                            .AddSingleton<IQckMoxCustomMatchResultHandler, QckMoxCustomMatchResultHandler>()
                            .AddSingleton<IQckMoxDefaultMatchResultHandler, QckMoxDefaultMatchResultHandler>()

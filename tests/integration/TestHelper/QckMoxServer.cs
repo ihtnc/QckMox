@@ -11,8 +11,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using QckMox.Configuration;
 using QckMox.IO;
-using QckMox.Response;
 using QckMox.Matcher;
+using QckMox.Request;
+using QckMox.Response;
 using NSubstitute;
 
 namespace QckMox.Tests.Integration.TestHelper
@@ -69,6 +70,8 @@ namespace QckMox.Tests.Integration.TestHelper
                                 .AddSingleton<IQckMoxMatcher, ResponseMapMatcher>()
                                 .AddSingleton<IQckMoxMatcher, RequestParameterMatcher>()
                                 .AddSingleton<IQckMoxMatcher, RequestMethodMatcher>()
+
+                                .AddSingleton<IQckMoxRequestConverter, QckMoxRequestConverter>()
 
                                 .AddSingleton<IQckMoxCustomMatchResultHandler, QckMoxCustomMatchResultHandler>()
                                 .AddSingleton<IQckMoxDefaultMatchResultHandler, QckMoxDefaultMatchResultHandler>()
