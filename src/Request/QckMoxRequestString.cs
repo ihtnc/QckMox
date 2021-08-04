@@ -277,7 +277,10 @@ namespace QckMox.Request
             if (Object.ReferenceEquals(left, right)) { return true; }
 
             if (string.Equals(left.Method, right.Method, StringComparison.OrdinalIgnoreCase) is false) { return false; }
-            if (string.Equals(left.Resource, right.Resource, StringComparison.OrdinalIgnoreCase) is false) { return false; }
+
+            var normalisedLeft = left.Resource?.Replace('\\', '/');
+            var normalisedRight = right.Resource?.Replace('\\', '/');
+            if (string.Equals(normalisedLeft, normalisedRight, StringComparison.OrdinalIgnoreCase) is false) { return false; }
 
             if (AreItemsEqual(left.Queries, right.Queries) is false) { return false; }
             if (AreItemsEqual(left.Headers, right.Headers) is false) { return false; }
@@ -285,12 +288,14 @@ namespace QckMox.Request
             return true;
         }
 
-        private static bool AreItemsEqual(IDictionary<string, StringValues> list1, IDictionary<string, StringValues> list2)
+        private static bool AreItemsEqual(IDictionary<string, StringValues> left, IDictionary<string, StringValues> right)
         {
-            if (list1.Count != list2.Count) { return false; }
+            if (left is null && right is null) { return true; }
+            if (left is null || right is null) { return false; }
+            if (left.Count != right.Count) { return false; }
 
-            var caseInsensitiveList1 = new Dictionary<string, StringValues>(list1, StringComparer.OrdinalIgnoreCase);
-            foreach(var item in list2)
+            var caseInsensitiveList1 = new Dictionary<string, StringValues>(left, StringComparer.OrdinalIgnoreCase);
+            foreach(var item in right)
             {
                 // keys are case insensitive
                 if (caseInsensitiveList1.ContainsKey(item.Key) is false) { return false; }
@@ -302,14 +307,16 @@ namespace QckMox.Request
             return true;
         }
 
-        private static bool AreItemsEqual(IReadOnlyCollection<string> list1, IReadOnlyCollection<string> list2)
+        private static bool AreItemsEqual(IReadOnlyCollection<string> left, IReadOnlyCollection<string> right)
         {
-            if (list1.Count != list2.Count) { return false; }
+            if (left is null && right is null) { return true; }
+            if (left is null || right is null) { return false; }
+            if (left.Count != right.Count) { return false; }
 
-            foreach(var item in list2)
+            foreach(var item in right)
             {
                 // values are case sensitive
-                if (list1.Contains(item) is false)
+                if (left.Contains(item) is false)
                 {
                     return false;
                 }

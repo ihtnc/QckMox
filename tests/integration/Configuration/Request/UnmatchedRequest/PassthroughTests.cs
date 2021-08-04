@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 using QckMox.Tests.Integration.TestHelper;
 
@@ -18,9 +17,11 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockNoFilesToExist();
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -43,9 +44,11 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockNoFilesToExist();
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
@@ -80,12 +83,12 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             var responsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(responsePath))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath)
+                .MockFileContent(responsePath, content);
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
@@ -127,10 +130,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             }
 
             var folderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, folderStructure, QckMoxConfig.FOLDER_CONFIG_FILE);
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig))
-                .Returns(null as string);
-
             var config = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -138,9 +137,13 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfig)
-                .Returns(config);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfig)
+                .MockFileContent(folderConfig, config);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -171,10 +174,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             var otherFolder = $"{Guid.NewGuid():N}";
             var otherFolderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, otherFolder, QckMoxConfig.FOLDER_CONFIG_FILE);
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(otherFolderConfig))
-                .Returns(null as string);
-
             var config = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -182,9 +181,13 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(otherFolderConfig)
-                .Returns(config);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(otherFolderConfig)
+                .MockFileContent(otherFolderConfig, config);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -218,10 +221,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             }
 
             var folderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, folderStructure, QckMoxConfig.FOLDER_CONFIG_FILE);
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig))
-                .Returns(null as string);
-
             var config = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -229,9 +228,13 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfig)
-                .Returns(config);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfig)
+                .MockFileContent(folderConfig, config);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -270,9 +273,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(anscestorConfigPath)
-                .Returns(ancestorConfig);
 
             var folderStructure = anscestorFolder;
             while(subFolderCount > 0)
@@ -286,13 +286,14 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             var folderConfig = @"{
     'Request': { }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfigPath)
-                .Returns(folderConfig);
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(anscestorConfigPath, folderConfigPath))
-                .Returns(null as string);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfigPath, anscestorConfigPath)
+                .MockFileContent(folderConfigPath, folderConfig)
+                .MockFileContent(anscestorConfigPath, ancestorConfig);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -331,16 +332,16 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             }
 
             var folderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, folderStructure, QckMoxConfig.FOLDER_CONFIG_FILE);
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig))
-                .Returns(null as string);
-
             var config = @"{
     'Request': { }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfig)
-                .Returns(config);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfig)
+                .MockFileContent(folderConfig, config);
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {
@@ -384,11 +385,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
 
             var resource = $"{Guid.NewGuid():N}";
             var folderConfigPath = Path.Combine(qcxmox.AppConfig.ResponseSource, parentStructure, resource, QckMoxConfig.FOLDER_CONFIG_FILE);
-
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(parentConfigPath, folderConfigPath))
-                .Returns(null as string);
-
             var parentConfig = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -396,10 +392,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(parentConfigPath)
-                .Returns(parentConfig);
-
             var folderConfig = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -407,9 +399,14 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfigPath)
-                .Returns(folderConfig);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(parentConfigPath, folderConfigPath)
+                .MockFileContent(parentConfigPath, parentConfig)
+                .MockFileContent(folderConfigPath, folderConfig);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -443,9 +440,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(anscestorConfigPath)
-                .Returns(ancestorConfig);
 
             var folderStructure = anscestorFolder;
             while(subFolderCount > 0)
@@ -463,13 +457,14 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
     }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfigPath)
-                .Returns(folderConfig);
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(anscestorConfigPath, folderConfigPath))
-                .Returns(null as string);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfigPath, anscestorConfigPath)
+                .MockFileContent(folderConfigPath, folderConfig)
+                .MockFileContent(anscestorConfigPath, ancestorConfig);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 
@@ -503,10 +498,6 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
             }
 
             var folderConfig = Path.Combine(qcxmox.AppConfig.ResponseSource, folderStructure, QckMoxConfig.FOLDER_CONFIG_FILE);
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig))
-                .Returns(null as string);
-
             var config = @"{
     'Request': {
         'UnmatchedRequest': {
@@ -514,9 +505,13 @@ namespace QckMox.Tests.Integration.Configuration.Request.UnmatchedRequest
         }
      }
 }";
-            qcxmox.FileProvider
-                .GetContent(folderConfig)
-                .Returns(config);
+
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfig)
+                .MockFileContent(folderConfig, config);
 
             var server = await qcxmox.StartServerWithRequestHandler(config =>
             {

@@ -16,6 +16,7 @@ namespace QckMox
         public static IServiceCollection AddQckMox(this IServiceCollection services, IConfiguration config)
         {
             return services.Configure<QckMoxAppConfig>(config.GetSection(QckMoxAppConfig.CONFIG_KEY))
+                           .AddIO()
                            .AddDependencies();
         }
 
@@ -29,6 +30,7 @@ namespace QckMox
                                 config = config ?? defaultConfig;
                                 return Options.Create<QckMoxAppConfig>(config);
                             })
+                           .AddIO()
                            .AddDependencies();
         }
 
@@ -41,10 +43,19 @@ namespace QckMox
             });
         }
 
+        internal static IServiceCollection AddIO(this IServiceCollection services)
+        {
+            return services.AddSingleton<IPathWrapper, PathWrapper>()
+                           .AddSingleton<IFileWrapper, FileWrapper>()
+                           .AddSingleton<IDirectoryWrapper, DirectoryWrapper>()
+                           .AddSingleton<IPathResolver, PathResolver>()
+                           .AddSingleton<IIOProvider, IOProvider>()
+                           .AddSingleton<IFileProvider, JsonFileProvider>();
+        }
+
         internal static IServiceCollection AddDependencies(this IServiceCollection services)
         {
-            return services.AddSingleton<IFileProvider, JsonFileProvider>()
-                           .AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
+            return services.AddSingleton<IQckMoxConfigurationProvider, QckMoxConfigurationProvider>()
 
                            .AddSingleton<IQckMoxMatcher, ResponseMapMatcher>()
                            .AddSingleton<IQckMoxMatcher, RequestParameterMatcher>()

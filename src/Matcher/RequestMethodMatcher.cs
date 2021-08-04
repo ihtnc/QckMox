@@ -1,4 +1,3 @@
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -10,8 +9,7 @@ namespace QckMox.Matcher
 {
     internal class RequestMethodMatcher : QckMoxMatcher
     {
-
-        public RequestMethodMatcher(IQckMoxConfigurationProvider config, IFileProvider file, IQckMoxRequestConverter converter) : base(config, file, converter)
+        public RequestMethodMatcher(IQckMoxConfigurationProvider config, IIOProvider io, IFileProvider file, IQckMoxRequestConverter converter) : base(config, io, file, converter)
         { }
 
         public override async Task<QckMoxMatchResult> Match(HttpRequest request, QckMoxConfig requestConfig)
@@ -27,9 +25,7 @@ namespace QckMox.Matcher
                 return NoMatchResult;
             }
 
-            var responseFile = GetResponseFile(request, requestConfig, excludeResource: true, excludeParameters: true);
-            var mockPath = Converter.GetResourceString(request);
-            var filePath = Path.Combine(globalConfig.ResponseSource, mockPath, responseFile);
+            var filePath = GetResponseFile(request, requestConfig, excludeResource: true, excludeParameters: true);
             return await GetMatchResult(filePath, requestConfig.Response);
         }
     }

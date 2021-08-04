@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 using QckMox.Tests.Integration.TestHelper;
 
@@ -26,13 +25,12 @@ namespace QckMox.Tests.Integration.Configuration
             var responsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, resourcePath);
             var content = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UseActualPathResolver()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath)
+                .MockFileContent(responsePath, content);
 
             var folderStructure = string.Empty;
             while(subFolderCount > 0)
@@ -92,16 +90,13 @@ namespace QckMox.Tests.Integration.Configuration
             var otherResponsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, "response.json");
             var otherContent = $"{{'data':'otherContent'}}";
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
-            qcxmox.FileProvider
-                .GetStreamContent(otherResponsePath)
-                .ReturnsAsStream(otherContent);
+            qcxmox
+                .UseActualPathWrapper()
+                .UseActualPathResolver()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath, otherResponsePath)
+                .MockFileContent(responsePath, content)
+                .MockFileContent(otherResponsePath, otherContent);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, resource);
             var server = await qcxmox.StartServer(config =>
@@ -145,16 +140,13 @@ namespace QckMox.Tests.Integration.Configuration
             var otherResponsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, folder, "response.json");
             var otherContent = $"{{'data':'{otherResource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(folderConfig))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(folderConfig)
-                .Returns(config);
-
-            qcxmox.FileProvider
-                .GetStreamContent(otherResponsePath)
-                .ReturnsAsStream(otherContent);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(folderConfig, otherResponsePath)
+                .MockFileContent(folderConfig, config)
+                .MockFileContent(otherResponsePath, otherContent);
 
             var server = await qcxmox.StartServer();
 
@@ -200,16 +192,13 @@ namespace QckMox.Tests.Integration.Configuration
 }}
 ";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(configPath))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(configPath)
-                .Returns(config);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(configPath, responsePath)
+                .MockFileContent(configPath, config)
+                .MockFileContent(responsePath, content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, folderStructure, resource);
             var server = await qcxmox.StartServer();
@@ -252,16 +241,13 @@ namespace QckMox.Tests.Integration.Configuration
 }}
 ";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(configPath))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(configPath)
-                .Returns(config);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+             qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(configPath, responsePath)
+                .MockFileContent(configPath, config)
+                .MockFileContent(responsePath, content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, "folder\\subfolder", resource);
             var server = await qcxmox.StartServer();
@@ -303,16 +289,13 @@ namespace QckMox.Tests.Integration.Configuration
 }}
 ";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(configPath))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(configPath)
-                .Returns(config);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+             qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(configPath, responsePath)
+                .MockFileContent(configPath, config)
+                .MockFileContent(responsePath, content);
 
             var requestUri = Path.Combine(qcxmox.AppConfig.EndPoint, uri, resource);
             var server = await qcxmox.StartServer();
@@ -353,16 +336,13 @@ namespace QckMox.Tests.Integration.Configuration
             var otherFolderResponsePath = Path.Combine(qcxmox.AppConfig.ResponseSource, otherFolder, QckMoxConfig.FOLDER_CONFIG_FILE);
             var otherContent = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(ArgAny.Except(otherFolderConfig))
-                .Returns(null as string);
-            qcxmox.FileProvider
-                .GetContent(otherFolderConfig)
-                .Returns(otherConfig);
-
-            qcxmox.FileProvider
-                .GetStreamContent(otherFolderResponsePath)
-                .ReturnsAsStream(otherContent);
+             qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(otherFolderConfig, otherFolderResponsePath)
+                .MockFileContent(otherFolderConfig, otherConfig)
+                .MockFileContent(otherFolderResponsePath, otherContent);
 
             var server = await qcxmox.StartServerWithRequestHandler();
 

@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json.Linq;
 using FluentAssertions;
-using NSubstitute;
 using Xunit;
 using QckMox.Tests.Integration.TestHelper;
 
@@ -18,18 +17,17 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
-            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath)
+                .MockFileContent(responsePath, content);
 
             var server = await qcxmox.StartServer();
 
@@ -56,18 +54,17 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
-            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath)
+                .MockFileContent(responsePath, content);
 
             var mockedEndPoint = "/api/mocks/";
             var server = await qcxmox.StartServer(config =>
@@ -100,19 +97,18 @@ namespace QckMox.Tests.Integration.Configuration
             // ARRANGE
             var qcxmox = new QckMoxServer();
 
-            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var resource = $"{Guid.NewGuid():N}";
+            var defaultConfig = QckMoxAppConfig.GetDefaultValues();
             var requestUri = Path.Combine("/api/active-endpoint/", resource);
             var responsePath = Path.Combine(defaultConfig.ResponseSource, resource, "GET.json");
             var content = $"{{'data':'{resource}'}}";
 
-            qcxmox.FileProvider
-                .GetContent(Arg.Any<string>())
-                .Returns(null as string);
-
-            qcxmox.FileProvider
-                .GetStreamContent(responsePath)
-                .ReturnsAsStream(content);
+            qcxmox
+                .UseActualPathWrapper()
+                .UsePathResolverThatResolvesAllPaths()
+                .MockAllFoldersToExist()
+                .MockSpecificFilesToExist(responsePath)
+                .MockFileContent(responsePath, content);
 
             var server = await qcxmox.StartServer(config =>
             {

@@ -1,6 +1,8 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
@@ -19,19 +21,21 @@ namespace QckMox.Configuration
 
     internal class QckMoxConfigurationProvider : IQckMoxConfigurationProvider
     {
-        private readonly QckMoxAppConfig _config;
-        private readonly IFileProvider _fileProvider;
+        private static readonly Regex _responseMapkeyMatcher = new Regex("([A-Za-z]+)[ ]+(.*)");
 
-        public QckMoxConfigurationProvider(IOptions<QckMoxAppConfig> global, IFileProvider fileProvider)
+        private readonly QckMoxAppConfig _config;
+        private readonly IIOProvider _io;
+        private readonly IFileProvider _file;
+
+        public QckMoxConfigurationProvider(IOptions<QckMoxAppConfig> global, IIOProvider io, IFileProvider file)
         {
+            _io = io;
+            _file = file;
+
             var appConfig = global.Value;
             var defaultConfig = QckMoxAppConfig.GetDefaultValues();
-            var config = defaultConfig
-                            .Merge(appConfig)
-                            .ResolveResponseMapPaths();
-
-            _config = config;
-            _fileProvider = fileProvider;
+            var config = defaultConfig.Merge(appConfig);
+            _config = ResolveResponseMapPaths(config);
         }
 
         public async Task<QckMoxAppConfig> GetGlobalConfig()
@@ -53,7 +57,7 @@ namespace QckMox.Configuration
             var uris = mockRequestPath.Split(new char[] { '/', '\\' }, StringSplitOptions.RemoveEmptyEntries);
             foreach(var uri in uris)
             {
-                breadCrumb = Path.Combine(breadCrumb, uri);
+                breadCrumb = _io.Path.Combine(breadCrumb, uri);
                 queue.Enqueue(breadCrumb);
             }
 
@@ -69,21 +73,23 @@ namespace QckMox.Configuration
 
         private async Task<QckMoxConfig> GetUriConfig(string requestUri)
         {
-            var configFile = Path.Combine(requestUri, QckMoxConfig.FOLDER_CONFIG_FILE);
-            var configFilePath = Path.Combine(_config.ResponseSource, configFile);
-            var content = await _fileProvider.GetContent(configFilePath);
+            var configFile = _io.Path.Combine(requestUri, QckMoxConfig.FOLDER_CONFIG_FILE);
+            var configFilePath = _io.Path.Combine(_config.ResponseSource, configFile);
+            var content = await _file.GetContent(configFilePath);
             if(content is null) { return null; }
 
             var obj = JObject.Parse(content);
-            var config = obj.ToObject<QckMoxConfig>()
-                            .ResolveResponseMapPaths(requestUri, _config.ResponseSource);
-
+            var config = obj.ToObject<QckMoxConfig>();
+            config = ResolveResponseMapPaths(config, requestUri, _config.ResponseSource);
             return config;
         }
 
         public async Task<QckMoxResponseFileConfig> GetResponseFileConfig(string filePath)
         {
-            var content = await _fileProvider.GetStreamContent(filePath);
+            if (string.IsNullOrWhiteSpace(filePath) is true) { return null; }
+
+            filePath = _io.PathResolver.ResolveFilePath(filePath);
+            var content = await _file.GetStreamContent(filePath);
             if(content is null) { return null; }
 
             return await GetResponseStreamConfig(content);
@@ -96,6 +102,45 @@ namespace QckMox.Configuration
             if(prop?.HasValues is not true) { return null; }
 
             var config = prop.ToObject<QckMoxResponseFileConfig>();
+            return config;
+        }
+
+        private QckMoxAppConfig ResolveResponseMapPaths(QckMoxAppConfig config)
+        {
+            return ResolveResponseMapPaths(config, string.Empty, config.ResponseSource);
+        }
+
+        private T ResolveResponseMapPaths<T>(T config, string requestUri, string responseSource) where T : QckMoxConfig
+        {
+            if(config?.ResponseMap?.Any() is not true) { return config; }
+
+            var valueReplacement = string.Empty;
+            if(string.IsNullOrWhiteSpace(requestUri) is false)
+            {
+                valueReplacement = $"{requestUri}/";
+            }
+
+            var resolvedMap = new Dictionary<string, string>();
+
+            foreach(var item in config.ResponseMap)
+            {
+                var key = item.Key;
+                var value = item.Value;
+
+                key = _responseMapkeyMatcher
+                        .Replace(key, $"$1 {valueReplacement}$2")
+                        .Replace('\\', '/');
+
+                if (_io.Path.IsPathRooted(value) is false)
+                {
+                    value = _io.Path.Combine(responseSource, requestUri, value);
+                }
+
+                resolvedMap.Add(key, value);
+            }
+
+            config.ResponseMap = resolvedMap;
+
             return config;
         }
     }
