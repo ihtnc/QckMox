@@ -114,6 +114,35 @@
             ],
             "problemMatcher": "$msCompile",
             "dependsOn": ["QckMox.Demo.ResponseMap: copy-mocks"],
+        },
+
+
+        // QckMox.Demo.MatchQuery
+        {
+            "label": "QckMox.Demo.MatchQuery: copy-mocks",
+            "type": "shell",
+            "command": "xcopy",
+            "args": [
+                "${workspaceFolder}\\demo\\05-match-query\\.qckmox",
+                "${workspaceFolder}\\demo\\05-match-query\\bin\\Debug\\netcoreapp5.0\\.qckmox",
+                "/Y",
+                "/I",
+                "/E"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "QckMox.Demo.MatchQuery: build",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/demo/05-match-query/QckMox.Demo.MatchQuery.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
+            ],
+            "problemMatcher": "$msCompile",
+            "dependsOn": ["QckMox.Demo.MatchQuery: copy-mocks"],
         }
     ]
 }

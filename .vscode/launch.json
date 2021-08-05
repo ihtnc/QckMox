@@ -96,6 +96,29 @@
         },
 
 
+        // QckMox.Demo.MatchQuery
+        {
+            "name": "QckMox.Demo.MatchQuery",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "QckMox.Demo.MatchQuery: build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "QckMox.Demo.MatchQuery.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/demo/05-match-query/bin/Debug/netcoreapp5.0/",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "uriFormat": "%s/api/weathersummary?id=1",
+                "pattern": "^\\s*Now listening on:\\s+(http:\\/\\/.+[0-9]+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+
+
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
