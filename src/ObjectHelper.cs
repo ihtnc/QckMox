@@ -9,6 +9,13 @@ namespace QckMox
         {
             var orig = config is not null ? config : new T();
             var json = JObject.FromObject(orig);
+
+            if (updates is null)
+            {
+                var sameConfig = json.ToObject<T>();
+                return sameConfig;
+            }
+
             var updated = JObject.FromObject(updates, new JsonSerializer
             {
                 DefaultValueHandling = DefaultValueHandling.Ignore

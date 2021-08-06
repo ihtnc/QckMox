@@ -38,8 +38,9 @@ namespace QckMox.Matcher
         public async Task<QckMoxMatchResult> GetMatchResult(QckMoxMatchResult customMatch, QckMoxResponseConfig responseConfig)
         {
             var fileContent = customMatch.Content;
+            var response = QckMoxResponseFileConfig.Copy(responseConfig);
             var config = await _config.GetResponseStreamConfig(fileContent);
-            config = config.Merge(responseConfig);
+            config = response.Merge(config);
             var content = await QckMoxMatchResultHelper.GetResponseContent(fileContent, config);
 
             return new QckMoxMatchResult

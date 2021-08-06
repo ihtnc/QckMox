@@ -15,6 +15,7 @@ namespace QckMox.IO
             PathResolver = pathResolver;
             Path = path;
             File = file;
+            Directory = directory;
         }
 
         public IPathWrapper Path { get; }

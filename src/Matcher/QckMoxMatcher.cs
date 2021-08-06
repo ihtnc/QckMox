@@ -39,8 +39,9 @@ namespace QckMox.Matcher
 
         protected internal async Task<QckMoxMatchResult> GetMatchResult(string filePath, QckMoxResponseConfig responseConfig)
         {
+            var response = QckMoxResponseFileConfig.Copy(responseConfig);
             var config = await ConfigProvider.GetResponseFileConfig(filePath);
-            config = config.Merge(responseConfig);
+            config = response.Merge(config);
             var fileContent = await FileProvider.GetStreamContent(filePath);
             var content = fileContent is not null
                 ? await QckMoxMatchResultHelper.GetResponseContent(fileContent, config)
