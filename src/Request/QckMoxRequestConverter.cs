@@ -56,7 +56,7 @@ namespace QckMox.Request
             {
                 foreach(var query in requestConfig.Request.MatchQuery)
                 {
-                    if(!request.Query.ContainsKey(query)) { continue; }
+                    if(request.Query.ContainsKey(query) is false) { continue; }
 
                     parts.Add($"{requestConfig.Request.QueryTag}{query}={request.Query[query]}");
                 }
@@ -66,7 +66,7 @@ namespace QckMox.Request
             {
                 foreach(var header in requestConfig.Request.MatchHeader)
                 {
-                    if(!request.Headers.ContainsKey(header)) { continue; }
+                    if(request.Headers.ContainsKey(header) is false) { continue; }
 
                     parts.Add($"{requestConfig.Request.HeaderTag}{header}={request.Headers[header]}");
                 }
