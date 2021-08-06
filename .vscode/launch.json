@@ -119,6 +119,29 @@
         },
 
 
+        // QckMox.Demo.MatchHeader
+        {
+            "name": "QckMox.Demo.MatchHeader",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "QckMox.Demo.MatchHeader: build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "QckMox.Demo.MatchHeader.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/demo/06-match-header/bin/Debug/netcoreapp5.0/",
+            "stopAtEntry": false,
+            // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
+            "serverReadyAction": {
+                "action": "openExternally",
+                "uriFormat": "%s/swagger",
+                "pattern": "^\\s*Now listening on:\\s+(http:\\/\\/.+[0-9]+)"
+            },
+            "env": {
+                "ASPNETCORE_ENVIRONMENT": "Development"
+            }
+        },
+
+
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
