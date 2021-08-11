@@ -4,7 +4,7 @@ namespace QckMox.IO
 {
     internal interface IDirectoryWrapper
     {
-        bool Exists(string path) => Directory.Exists(path);
+        bool Exists(string path);
         string[] GetFiles(string path, string searchPattern);
     }
 

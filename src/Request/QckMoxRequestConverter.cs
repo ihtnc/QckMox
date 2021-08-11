@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using QckMox.Configuration;
 
 namespace QckMox.Request
@@ -56,17 +57,20 @@ namespace QckMox.Request
             {
                 foreach(var query in requestConfig.Request.MatchQuery)
                 {
-                    if(request.Query.ContainsKey(query) is false) { continue; }
+                    if(request.Query.All(q =>
+                        string.Equals(q.Key, query, StringComparison.OrdinalIgnoreCase) is false))
+                        { continue; }
 
                     parts.Add($"{requestConfig.Request.QueryTag}{query}={request.Query[query]}");
                 }
             }
 
+            var headers = new Dictionary<string, StringValues>(request.Headers, StringComparer.OrdinalIgnoreCase);
             if(requestConfig.Request.MatchHeader?.Any() is true)
             {
                 foreach(var header in requestConfig.Request.MatchHeader)
                 {
-                    if(request.Headers.ContainsKey(header) is false) { continue; }
+                    if(headers.ContainsKey(header) is false) { continue; }
 
                     parts.Add($"{requestConfig.Request.HeaderTag}{header}={request.Headers[header]}");
                 }

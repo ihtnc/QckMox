@@ -86,14 +86,13 @@ namespace QckMox.Matcher
             var path = SearchFiles(files, requestString, requestConfig.Request);
             if (string.IsNullOrWhiteSpace(path) is true) { return null; }
 
-            path = IOProvider.Path.Combine(folder, path);
             return path;
         }
 
         private string[] FilterFiles(string[] files, string search)
         {
             if (string.IsNullOrWhiteSpace(search) is true) { return files; }
-            files = files?.Where(f => IOProvider.Path.GetFileName(f).Contains(search, StringComparison.OrdinalIgnoreCase))?.ToArray() ?? new string[0];
+            files = files?.Where(f => IOProvider.Path.GetFileNameWithoutExtension(f).Contains(search, StringComparison.OrdinalIgnoreCase))?.ToArray() ?? new string[0];
             return files;
         }
 
@@ -101,7 +100,7 @@ namespace QckMox.Matcher
         {
             var file = files?.FirstOrDefault(f =>
             {
-                var fileName = IOProvider.Path.GetFileName(f);
+                var fileName = IOProvider.Path.GetFileNameWithoutExtension(f);
                 var valid = QckMoxRequestString.TryParse(fileName, out var converted, requestConfig.QueryTag, requestConfig.HeaderTag);
                 if (valid is false) { return false; }
 

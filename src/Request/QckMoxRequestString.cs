@@ -213,7 +213,7 @@ namespace QckMox.Request
 
         private static IDictionary<string, StringValues> ParseParameters(IReadOnlyCollection<string> parameters, string tag, string tagToExclude)
         {
-            var parsed = new Dictionary<string, StringValues>();
+            var parsed = new Dictionary<string, StringValues>(StringComparer.OrdinalIgnoreCase);
             foreach(var item in parameters)
             {
                 if(string.IsNullOrWhiteSpace(tag) is false
@@ -294,14 +294,14 @@ namespace QckMox.Request
             if (left is null || right is null) { return false; }
             if (left.Count != right.Count) { return false; }
 
-            var caseInsensitiveList1 = new Dictionary<string, StringValues>(left, StringComparer.OrdinalIgnoreCase);
+            var caseInsensitiveList = new Dictionary<string, StringValues>(left, StringComparer.OrdinalIgnoreCase);
             foreach(var item in right)
             {
                 // keys are case insensitive
-                if (caseInsensitiveList1.ContainsKey(item.Key) is false) { return false; }
+                if (caseInsensitiveList.ContainsKey(item.Key) is false) { return false; }
 
                 // values are case sensitive
-                if (AreItemsEqual(caseInsensitiveList1[item.Key], item.Value) is false) { return false; }
+                if (AreItemsEqual(caseInsensitiveList[item.Key], item.Value) is false) { return false; }
             }
 
             return true;

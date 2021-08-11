@@ -4,7 +4,7 @@ namespace QckMox.IO
 {
     internal interface IFileWrapper
     {
-        bool Exists(string path) => File.Exists(path);
+        bool Exists(string path);
     }
 
     internal class FileWrapper : IFileWrapper
