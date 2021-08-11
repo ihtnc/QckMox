@@ -1,0 +1,13 @@
+{
+    "data": {
+        "data": {
+            "id": 3,
+            "name": "Chilly"
+        },
+        "message": "Summary (id: 3) updated by user-id: [Any]!"
+    },
+
+    "_qckmox": {
+        "contentInProp": true
+    }
+}
